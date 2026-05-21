@@ -15,11 +15,14 @@ iconName='myIcon.png';
 compileObj=compiler.build.standaloneApplication('Vocaliscope.mlapp',...
     'ExecutableVersion',version,...
     'ExecutableSplashScreen',splashName,...
-    'ExecutableIcon',iconName);
+    'ExecutableIcon',iconName,...
+    'AdditionalFiles',{'fCWT.mexw64','fCWT.dll','fftw3f.dll'});
 
 disp('compiling finished');
 
 disp(compileObj)
+disp(compileObj.Files)
+disp(compileObj.RuntimeDependencies)
 
 disp('copying dependencies...');
 
@@ -36,10 +39,12 @@ end
 
 [fListApp] = matlab.codetools.requiredFilesAndProducts('Vocaliscope.mlapp');
 
+fListAdditional=compileObj.Options.AdditionalFiles';
+
 currentScriptName=[mfilename '.m'];
 [fListCompilation] = matlab.codetools.requiredFilesAndProducts(currentScriptName);
 
-totalList=[fListApp fListCompilation {splashName iconName}];
+totalList=[fListApp fListAdditional fListCompilation {splashName iconName}];
 
 for nr=1:numel(totalList)
     
