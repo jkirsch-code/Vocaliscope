@@ -12,7 +12,7 @@ function varargout = subdir(varargin)
 %
 %   name:   pathname or filename for search, can be absolute or relative
 %           and wildcards (*) are allowed.  If ommitted, the files in the
-%           current working directory and its child folders are returned    
+%           current working directory and its child folders are returned
 %
 % Output variables:
 %
@@ -26,7 +26,7 @@ function varargout = subdir(varargin)
 %
 %   >> a = subdir(fullfile(matlabroot, 'toolbox', 'matlab', '*.mat'))
 %
-%   a = 
+%   a =
 %
 %   67x1 struct array with fields:
 %       name
@@ -36,7 +36,7 @@ function varargout = subdir(varargin)
 %
 %   >> a(2)
 %
-%   ans = 
+%   ans =
 %
 %        name: '/Applications/MATLAB73/toolbox/matlab/audiovideo/chirp.mat'
 %        date: '14-Mar-2004 07:31:48'
@@ -87,8 +87,8 @@ for ifolder = 1:length(pathandfilt)
     if ~isempty(NewFiles)
         %%% I COMENTED THIS OUT BECAUSE I WANT THE OUTPUT name AND folder
         %%%% FIELDS TO BE EQUIVALENT TO THE NORMAL DIR
-        
-        %fullnames = cellfun(@(a) fullfile(pathfolders{ifolder}, a), {NewFiles.name}, 'UniformOutput', false); 
+
+        %fullnames = cellfun(@(a) fullfile(pathfolders{ifolder}, a), {NewFiles.name}, 'UniformOutput', false);
         %[NewFiles.name] = deal(fullnames{:});
         Files = [Files; NewFiles];
     end
@@ -104,7 +104,10 @@ end
 %---------------------------
 % Output
 %---------------------------
-    
+
+[~,uniqueEntries]=unique(append({Files.folder},filesep,{Files.name}));
+Files=Files(uniqueEntries);
+
 if nargout == 0
     if ~isempty(Files)
         fprintf('\n');
@@ -121,7 +124,8 @@ function [p] = genpath_local(d)
 %     - MATLAB package folders (folder name starts with '+')
 files = dir(d);
 if isempty(files)
-  return
+    p=[];
+    return
 end
 p = '';  % Initialize output
 % Add d to the path even if it is empty.
@@ -130,8 +134,13 @@ p = [p d pathsep];
 isdir = logical(cat(1,files.isdir));
 dirs = files(isdir);  % Select only directory entries from the current listing
 for i=1:length(dirs)
-   dirname = dirs(i).name;
-   if    ~strcmp( dirname,'.') && ~strcmp( dirname,'..')
-       p = [p genpath(fullfile(d,dirname))];  % Recursive calling of this function.
-   end
+    dirname = dirs(i).name;
+    if ~strcmp( dirname,'.') && ~strcmp( dirname,'..')
+        p = [p genpath(fullfile(d,dirname))];  % Recursive calling of this function.
+        
+        %%% added this such that paths with '\+ are searched deeply'
+        if contains(fullfile(d,dirname),{[filesep '+']})
+            p = [p genpath_local(fullfile(d,dirname))];
+        end
+    end
 end

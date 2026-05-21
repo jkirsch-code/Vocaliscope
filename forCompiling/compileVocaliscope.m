@@ -18,7 +18,7 @@ compileObj=compiler.build.standaloneApplication('Vocaliscope.mlapp',...
     'ExecutableVersion',version,...
     'ExecutableSplashScreen',splashName,...
     'ExecutableIcon',iconName,...
-    'AdditionalFiles',{'fCWT.mexw64','fCWT.dll','fftw3f.dll'},...
+    'AdditionalFiles',{'+FCWT\fCWT.mexw64','+FCWT\fCWT.dll','+FCWT\fftw3f.dll',},...
     'SupportPackages','none');
 
 disp('compiling finished');
@@ -50,7 +50,19 @@ fListAdditional=compileObj.Options.AdditionalFiles';
 currentScriptName=[mfilename '.m'];
 [fListCompilation] = matlab.codetools.requiredFilesAndProducts(currentScriptName);
 
-totalList=[fListApp fListAdditional fListCompilation {splashName iconName}];
+LicenseFiles=SUBDIR.subdir('*License*');
+LicenseFiles=fullfile({LicenseFiles.folder},{LicenseFiles.name});
+LicenseFiles(~contains(LicenseFiles,[filesep '+']))=[];
+
+ReadmeFiles=SUBDIR.subdir('*Readme*');
+ReadmeFiles=fullfile({ReadmeFiles.folder},{ReadmeFiles.name});
+ReadmeFiles(~contains(ReadmeFiles,[filesep '+']))=[];
+
+
+
+totalList=[fListApp fListAdditional fListCompilation LicenseFiles ReadmeFiles {splashName iconName}];
+
+totalList=unique(totalList);
 
 for nr=1:numel(totalList)
     

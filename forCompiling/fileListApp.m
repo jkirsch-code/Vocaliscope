@@ -1,11 +1,12 @@
 function pathsOut=fileListApp()
 % FILELISTAPP  Small UIFigure-based interface to collect .mat file paths.
 
-fig = uifigure("Name","File List",'Theme','light');
-fig.Position(3:4) = [700 400];
+fig = uifigure("Name","File List",'Theme','light','Units','normalized','OuterPosition',[0.1 0.2 0.8 0.6]);
+
+%fig.Position(3:4) = [700 400];
 
 % Layout: two rows: table area and buttons row
-gl = uigridlayout(fig, [4,5]);
+gl = uigridlayout(fig, [4,6]);
 gl.RowHeight = {'1x', 'fit','fit','fit'};   
 gl.Padding = [10 10 10 10];
 gl.RowSpacing = 10;
@@ -13,7 +14,7 @@ gl.RowSpacing = 10;
 % Table container (gives a fixed area so table shows scrollbars when data large)
 tblPanel = uipanel(gl,"BorderType","none",'Title',[]);
 tblPanel.Layout.Row = 1;
-tblPanel.Layout.Column = [1 5];
+tblPanel.Layout.Column = [1 6];
 
 drawnow;
 
@@ -30,23 +31,25 @@ uit = uitable(tblPanel, ...
 
 filterTextEditField = uieditfield(gl,'Placeholder','type here to filter the displayed rows','ValueChangingFcn',@filterDisplayedTable);
 filterTextEditField.Layout.Row=2;
-filterTextEditField.Layout.Column=[1 5];
+filterTextEditField.Layout.Column=[1 6];
 
 displayedEntriesLabel=uilabel(gl,'Text',sprintf('showing 0 of 0 entries'));
 displayedEntriesLabel.Layout.Row=3;
-displayedEntriesLabel.Layout.Column=[1 5];
+displayedEntriesLabel.Layout.Column=[1 6];
 
 
 btnAdd = uibutton(gl, "Text","add files", "ButtonPushedFcn", @(~,~)onAdd(0),'WordWrap','on');
 btnAddAllInFolder = uibutton(gl, "Text","add files in folder", "ButtonPushedFcn", @(~,~)onAdd(1),'WordWrap','on');
 btnAddAllInFolderAndAllSubfolders = uibutton(gl, "Text","add files in folder and all subfolders", "ButtonPushedFcn", @(~,~)onAdd(2),'WordWrap','on');
-btnDelete = uibutton(gl, "Text","delete selected", "ButtonPushedFcn", @(~,~)onDelete(),'WordWrap','on');
-btnProcess = uibutton(gl, "Text","process listed files", "ButtonPushedFcn", @(~,~)onProcess(),'WordWrap','on');
+btnSelectAll = uibutton(gl, "Text","select all entries", "ButtonPushedFcn", @(~,~) selectAllFcn,'WordWrap','on');
+btnDelete = uibutton(gl, "Text","delete selected entries", "ButtonPushedFcn", @(~,~)onDelete(),'WordWrap','on','BackgroundColor',[1 0.58 0.19]);
+btnProcess = uibutton(gl, "Text","process listed files and continue to parameter selection", "ButtonPushedFcn", @(~,~)onProcess(),'WordWrap','on','BackgroundColor',[0 0.7 0]);
 
 % set the layout row to 3 for all buttons
 btnAdd.Layout.Row=4;
 btnAddAllInFolder.Layout.Row=4;
 btnAddAllInFolderAndAllSubfolders.Layout.Row=4;
+btnSelectAll.Layout.Row=4;
 btnDelete.Layout.Row=4;
 btnProcess.Layout.Row=4;
 
@@ -148,6 +151,12 @@ end
         updateTable();
     end
 
+    function selectAllFcn
+        if ~isempty(uit.Data)
+            uit.Selection=1:size(uit.Data,1);
+        end
+    end
+
     function onDelete()
         d = guidata(fig);
         selection = d.uit.Selection;  % n-by-2 array [row col]
@@ -212,7 +221,12 @@ end
             return;            
         end
 
-        rowsToShow=any(contains(d.store,filtertext,'IgnoreCase',true),2);
+        if ~isempty(filtertext)
+            % i want that * can be used as wildcard in regexpi
+            rowsToShow=any(~cellfun(@isempty,regexpi(d.store,replace(filtertext,'*','.*'),'once')),2);
+        else
+            rowsToShow=true(size(d.store,1),1);
+        end
         
         
         d.uit.Data=d.store(rowsToShow,:);
