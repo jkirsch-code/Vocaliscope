@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+title: Vocaliscope
+message: "If you use this software, please cite it using the metadata from this file."
+type: software
+authors:
+  - given-names: Jonas
+    family-names: Kirsch
+    email: "jonas.kirsch@med.uni-muenchen.de"
+    affiliation: "LMU Munich"
+    orcid: "https://orcid.org/0000-0002-6024-183X"
+repository-code: "https://github.com/jkirsch-code/Vocaliscope"
+keywords:
+  - "multi channel"
+  - "voice research"
+  - GUI
+license: GPL-3.0-or-later
+version: 5.0
+date-released: 2026-05-20
