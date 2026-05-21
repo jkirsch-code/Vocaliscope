@@ -36,3 +36,5 @@ wavFileForApparat.wav
 mccExcludedFiles.log
 includedSupportPackages.txt
 batchModeLog.txt
+
+*.exe
