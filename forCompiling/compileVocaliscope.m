@@ -1,7 +1,8 @@
 function compileVocaliscope(version)
 
-
-if isnumeric(version)
+if nargin<1 || isempty(version)
+    version=getVersionFromMlapp('Vocaliscope.mlapp');
+elseif isnumeric(version)
     version=num2str(version,'%3.1f');
 end
 
@@ -11,7 +12,10 @@ end
 
 splashName='mySplash.png';
 iconName='myIcon.png';
-compileObj=compiler.build.standaloneApplication('Vocaliscope.mlapp','ExecutableVersion',version,'ExecutableSplashScreen',splashName,'ExecutableIcon',iconName);
+compileObj=compiler.build.standaloneApplication('Vocaliscope.mlapp',...
+    'ExecutableVersion',version,...
+    'ExecutableSplashScreen',splashName,...
+    'ExecutableIcon',iconName);
 
 disp('compiling finished');
 
@@ -20,7 +24,7 @@ disp(compileObj)
 disp('copying dependencies...');
 
 if isfile('VocaliscopestandaloneApplication\Vocaliscope.exe')
-    movefile('VocaliscopestandaloneApplication\Vocaliscope.exe',['VocaliscopestandaloneApplication\Vocaliscope-V' strrep(version,'.','-') '.exe']);
+    movefile('VocaliscopestandaloneApplication\Vocaliscope.exe',['VocaliscopestandaloneApplication\Vocaliscope_V' strrep(version,'.','_') '.exe']);
 end
 
 
@@ -50,3 +54,5 @@ copyfile(currentScriptName,[compiledPath currentScriptName]);
 disp('copy finished')
 
 end
+
+
