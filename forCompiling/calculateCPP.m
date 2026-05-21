@@ -44,12 +44,36 @@ end
 t=t(:); s=s(:);
 
 switch windowType
-    case 'hann'
+    case "hamming"
+        window = hamming(numel(s));
+    case {"hann","hanning"}
         window=hann(numel(s));
-    case 'hamming'
-        window=hamming(numel(s));
-    otherwise % no windowing
-        window=ones(size(s));
+    case "rectwin"
+        window=ones(numel(s),1);
+    case "barthannwin"
+        window=barthannwin(numel(s));
+    case "bartlett"
+        window=bartlett(numel(s));
+    case "blackman"
+        window=blackman(numel(s));
+    case "blackmanharris"
+        window=blackmanharris(numel(s));
+    case "bohmanwin"
+        window=bohmanwin(numel(s));
+    case "chebwin"
+        window=chebwin(numel(s));
+    case "flattopwin"
+        window=flattopwin(numel(s));
+    case "gausswin"
+        window=gausswin(numel(s));
+    case "nuttallwin"
+        window=nuttallwin(numel(s));
+    case "parzenwin"
+        window=parzenwin(numel(s));
+    case "triang"
+        window=triang(numel(s));
+    otherwise
+        window=ones(numel(s),1);
 end
 
 s=s.*window;
@@ -72,8 +96,6 @@ CPPout(1:numel(fitTypes))=struct('value',[],'method',[],'goodnessOfFit',[],'fitS
 
 for fitTypeNr=1:numel(fitTypes)
 
-    %disp(['CPP: fitting method ' fitTypes{fitTypeNr}]);
-
     if doPlot
         figure;
         ax=gca;
@@ -89,7 +111,6 @@ for fitTypeNr=1:numel(fitTypes)
     for methodNr=1:numel(methods)
 
         try
-            %disp(['CPP: robust method ' methods{methodNr}]);
 
             warning('off','curvefit:fit:iterationLimitReached');
             [fitObj,gof]=fit(fitX,CPS((t>lowerQuefrencyFitLimit & t<upperQuefrencyFitLimit)),fitTypes{fitTypeNr},'Robust',methods{methodNr});
@@ -137,20 +158,11 @@ for fitTypeNr=1:numel(fitTypes)
         xlabel(ax,'Quefrency (s)')
     end
 
-    % if strcmpi(fitTypes{fitTypeNr},'poly1')
     CPPout(fitTypeNr).value=CPP;
     CPPout(fitTypeNr).method=methods;
     CPPout(fitTypeNr).goodnessOfFit=gofCell;
     CPPout(fitTypeNr).fitShape=fitTypes{fitTypeNr};
-    % elseif strcmpi(fitTypes{fitTypeNr},'poly2')
-    %     CPPparabolic.value=CPP;
-    %     CPPparabolic.method=methods;
-    %     CPPparabolic.goodnessOfFit=gofCell;
-    % else
-    %     CPPexp.value=CPP;
-    %     CPPexp.method=methods;
-    %     CPPexp.goodnessOfFit=gofCell;
-    % end
+  
 
 end
 end
