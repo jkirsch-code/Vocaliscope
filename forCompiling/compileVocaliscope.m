@@ -36,7 +36,10 @@ end
 
 compiledPath='VocaliscopestandaloneApplication\forCompiling\';
 
-if ~isfolder(compiledPath)
+if isfolder(compiledPath)
+    rmdir(compiledPath,"s")
+    mkdir(compiledPath);
+else
     mkdir(compiledPath);
 end
 
@@ -52,11 +55,19 @@ totalList=[fListApp fListAdditional fListCompilation {splashName iconName}];
 for nr=1:numel(totalList)
     
     [~,name,ext]=fileparts(totalList{nr});
-    copyfile(totalList{nr},[compiledPath name ext]);
+    if isempty(strfind(totalList{nr},[filesep '+']))
+        copyfile(totalList{nr},[compiledPath name ext]);
+    else % to preserve folder structure if i want to compile it separately later
+        containingFolder=extractBetween(totalList{nr},[filesep '+'],[name ext]); containingFolder=containingFolder{1}; containingFolder=['+' containingFolder];
+
+        if ~isfolder([compiledPath containingFolder])
+            mkdir([compiledPath containingFolder]);
+        end
+        copyfile(totalList{nr},[compiledPath containingFolder name ext]);
+    end
 end
 
 % also copy this script
-
 copyfile(currentScriptName,[compiledPath currentScriptName]);
 
 disp('copy finished')
