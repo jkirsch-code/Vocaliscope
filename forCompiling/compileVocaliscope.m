@@ -6,6 +6,8 @@ elseif isnumeric(version)
     version=num2str(version,'%3.1f');
 end
 
+save('currentAppVersion.mat',"version");
+
 if isfolder('VocaliscopestandaloneApplication')
     delete('VocaliscopestandaloneApplication\*.exe');
 end

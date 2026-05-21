@@ -40,8 +40,9 @@ function [SaEn ,Phi, Phi1] = fastSampEn(sig,dim,stdPercentage)
 % [2] : "Fast computation of sample entropy and approximate entropy in
 % biomedicine" - Yu-Hsiang Pan et al.,2011
 if (dim+1)<=10
-    method = 'kdtree';
-else method = 'exhaustive';
+   method = 'kdtree';
+else
+    method = 'exhaustive';
 end
 
 r=stdPercentage*std(sig);
