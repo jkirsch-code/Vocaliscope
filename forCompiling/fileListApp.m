@@ -221,9 +221,21 @@ end
             return;            
         end
 
-        if ~isempty(filtertext)
+        if ~isempty(filtertext) && ~strcmp(filtertext(1),'~')
+
+            if numel(filtertext)>1 && filtertext(1)=='~'
+                filtertext(1)=[];
+                doNot=1;
+            else
+                doNot=0;
+            end
+
             % i want that * can be used as wildcard in regexpi
             rowsToShow=any(~cellfun(@isempty,regexpi(d.store,replace(filtertext,'*','.*'),'once')),2);
+
+            if doNot
+                rowsToShow=~rowsToShow;
+            end
         else
             rowsToShow=true(size(d.store,1),1);
         end

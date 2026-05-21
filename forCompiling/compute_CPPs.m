@@ -3,24 +3,25 @@ function [cpps, times, cep_smooth, fitObjsSmooth, cepstrogram, cpp, fitObjs] = c
 % 
 %
 % Syntax:
-%   [cpps, times, cep_smooth, cepstrogram]           = compute_CPPs(audio, fs, options)
+%   [cpps, times, cep_smooth, fitObjsSmooth, cepstrogram]               = compute_CPPs(audio, fs, options)
 %
-%   When called with cpp output, also cpp is calculated, which takes longer
-%   due to fitting
-%   [cpps, times, cep_smooth, cepstrogram, cpp]      = compute_CPPs(audio, fs, options)
+%   When called with cpp output, also cpp and fitObjs are calculated,
+%   which takes longer due to fitting
+%
+%   [cpps, times, cep_smooth, fitObjsSmooth, cepstrogram, cpp, fitObjs] = compute_CPPs(audio, fs, options)
 %
 % Required Inputs:
 %   signal - input signal (Nx1 or 1xN double)
 %   fs     - Sample rate (Hz)
 %
 % Outputs:
-%   cpps       - CPPS values per frame (1xN dB)     [always]
-%   times      - Frame center times (1xN seconds)   [always]
-%   cep_smooth - smoothed cesptrogram               [always]
+%   cpps          - CPPS values per frame (1xN dB)     [always]
+%   times         - Frame center times (1xN seconds)   [always]
+%   cep_smooth    - smoothed cesptrogram               [always]
 %   fitObjsSmooth - fit object for each frame of the smoothed cepstrum [always]
-%   cepstrogram - non-smoothed cepstrogram          [always]
-%   cpp        - CPP values per frame (1xN dB)      [nargout>5 only]
-%   fitObjs    - CPP fit object for each frame of the original cesptrum [nargout>5 only]
+%   cepstrogram   - non-smoothed cepstrogram          [always]
+%   cpp           - CPP values per frame (1xN dB)      [nargout>5 only]
+%   fitObjs       - CPP fit object for each frame of the original cesptrum [nargout>5 only]
 %
 % Name-Value Parameters (Praat PowerCepstrogram defaults):
 %   ResampleFs          = 22050 Hz   - Analysis sample rate

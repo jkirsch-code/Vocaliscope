@@ -38,3 +38,6 @@ includedSupportPackages.txt
 batchModeLog.txt
 
 *.exe
+*lastMaskCreatorSettings.mat
+*lastVocaliscopesettings.mat
+
