@@ -1,9 +1,9 @@
 <deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
-  <configuration build-checksum="847508916" file="E:\Arbeit\MSAreplacement\MSAreplacement.prj" location="E:\Arbeit\MSAreplacement" name="MSAreplacement" preferred-package-location="E:\Arbeit\MSAreplacement\MSAreplacement\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
+  <configuration build-checksum="3604918934" file="E:\Arbeit\MSAreplacement\MSAreplacement.prj" location="E:\Arbeit\MSAreplacement" name="MSAreplacement" preferred-package-location="E:\Arbeit\MSAreplacement\MSAreplacement\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
     <param.appname>MSAreplacement</param.appname>
     <param.icon />
     <param.icons />
-    <param.version>0.4</param.version>
+    <param.version>0.5</param.version>
     <param.authnamewatermark>Jonas Kirsch</param.authnamewatermark>
     <param.email>jonas.kirsch@tum.de, jonas.kirsch@med.uni-muenchen.de</param.email>
     <param.company>TUM, LMU</param.company>
@@ -86,6 +86,7 @@
       <file>${PROJECT_ROOT}\parameterDescription.xlsx</file>
     </fileset.package>
     <fileset.depfun>
+      <file>${PROJECT_ROOT}\fastSampEn.m</file>
       <file>${PROJECT_ROOT}\interactiveFiltering.mlapp</file>
       <file>${PROJECT_ROOT}\lastMSAsettings.mat</file>
       <file>${PROJECT_ROOT}\MSAcalculationSettings.mlapp</file>
