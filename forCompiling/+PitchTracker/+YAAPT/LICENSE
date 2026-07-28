@@ -1,0 +1,26 @@
+YAAPT Pitch Tracking Program
+
+Copyright (C) 2000-2016 Hongbing Hu and Stephen A. Zahorian
+Speech Communication Laboratory
+State University of New York at Binghamton
+
+This program is free software distributed by the Speech Communication
+Laboratory at SUNY Binghamton as a contribution to the research community.
+
+Authors:
+  Hongbing Hu
+  Stephen A. Zahorian
+  Speech Communication Laboratory
+  State University of New York at Binghamton
+  http://www.ws.binghamton.edu/zahorian
+
+Reference:
+  S. A. Zahorian and H. Hu, "A spectral/temporal method for robust
+  fundamental frequency tracking," J. Acoust. Soc. Am., 123(6),
+  4559-4571, June 2008.
+
+Source:
+  https://www.ws.binghamton.edu/zahorian/yaapt.htm
+  Archived: https://web.archive.org/web/20250613152848/https://www.ws.binghamton.edu/zahorian/yaapt.htm
+
+This software is provided as-is without warranty of any kind.

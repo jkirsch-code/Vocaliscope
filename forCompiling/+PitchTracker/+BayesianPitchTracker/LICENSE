@@ -1,0 +1,58 @@
+BF0NLS — Bayesian Pitch Tracking Using Harmonic Model
+Copyright (C) 2019 Liming Shi, Aalborg University, Denmark
+Email: ls@create.aau.dk
+
+estnoiseg_orig.m — Noise PSD estimator (VOICEBOX)
+Copyright (C) 2012 Mike Brookes, Imperial College London
+Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+Additional attributions:
+
+This code is based on the following publications:
+
+1. L. Shi, J. K. Nielsen, J. R. Jensen, M. A. Little, and
+   M. G. Christensen, "Robust Bayesian Pitch Tracking Based on
+   the Harmonic Model," IEEE/ACM Trans. Audio, Speech, and Lang.
+   Process., vol. 27, no. 11, pp. 1737-1751, Nov. 2019.
+
+2. J. K. Nielsen, T. L. Jensen, J. R. Jensen, M. G. Christensen,
+   and S. H. Jensen, "Fast fundamental frequency estimation: Making
+   a statistically efficient estimator computationally efficient,"
+   Signal Processing, vol. 135, pp. 188-197, 2017.
+
+3. J. K. Nielsen, M. G. Christensen, A. T. Cemgil, and
+   S. H. Jensen, "Bayesian Model Comparison With the g-Prior,"
+   IEEE Trans. Signal Process., vol. 62, no. 1, pp. 225-238, 2014.
+
+4. T. Gerkmann and R. C. Hendriks, "Unbiased MMSE-Based Noise Power
+   Estimation With Low Complexity and Low Tracking Delay," IEEE Trans.
+   Audio, Speech, Language Process., vol. 20, pp. 1383-1393, 2012.
+
+Original source code available at:
+  - BF0NLS: https://github.com/MalcomX/2DBarcodeDetection
+  - fastF0Nls: https://github.com/jkjaer/fastF0Nls
+  - VOICEBOX: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html
+
+                    GNU GENERAL PUBLIC LICENSE
+                       Version 2, June 1991
+
+ Copyright (C) 1989, 1991 Free Software Foundation, Inc.
+                          675 Mass Ave, Cambridge, MA 02139, USA
+ Everyone is permitted to copy and distribute verbatim copies
+ of this license document, but changing it is not allowed.
+
+[Full GPL v2 text available at https://www.gnu.org/licenses/old-licenses/gpl-2.0.html]

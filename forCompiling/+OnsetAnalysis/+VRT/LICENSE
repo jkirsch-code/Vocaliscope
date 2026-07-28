@@ -1,0 +1,29 @@
+GNU GENERAL PUBLIC LICENSE
+Version 3, 29 June 2007
+
+Copyright (C) 2024 Jonas (Vocaliscope project)
+
+This file is part of Vocaliscope.
+
+Vocaliscope is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Vocaliscope is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Vocaliscope.  If not, see <https://www.gnu.org/licenses/>.
+
+---
+
+ATTRIBUTION NOTE:
+The Vocal Rise Time (VRT) algorithm in this package is an original
+implementation inspired by the VOAT toolbox (Arias-Vergara et al., 2024,
+SoftwareX, DOI: 10.1016/j.softx.2024.101802). VOAT is licensed under
+Apache License 2.0 / GPL v3+. This implementation does not copy VOAT
+source code; it reimplements the described energy-based VAD + RMS
+envelope approach independently.

@@ -36,8 +36,13 @@ wavFileForApparat.wav
 mccExcludedFiles.log
 includedSupportPackages.txt
 batchModeLog.txt
+requiredMCRProducts.txt
 
 *.exe
 *lastMaskCreatorSettings.mat
 *lastVocaliscopesettings.mat
+*currentAppVersion.mat
+Vocaliscope*.zip
 
+# this is already in the for compiling folder
++usePraatViaMatlab/

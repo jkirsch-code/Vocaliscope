@@ -1,6 +1,6 @@
 function [SaEn ,Phi, Phi1] = fastSampEn(sig,dim,stdPercentage)
 
-%  Filippo (2025). Fast Sample Entropy - saenkd(dim ,r ,sig ) (https://www.mathworks.com/matlabcentral/fileexchange/48574-fast-sample-entropy-saenkd-dim-r-sig), MATLAB Central File Exchange. Abgerufen 4. Juni 2025. 
+%  Filippo (2014). Fast Sample Entropy - saenkd(dim ,r ,sig ) (https://www.mathworks.com/matlabcentral/fileexchange/48574-fast-sample-entropy-saenkd-dim-r-sig), MATLAB Central File Exchange. Abgerufen 4. Juni 2025. 
 %
 % [SaEn, Phi, Phi1] = saen_range(dim,r,sig)
 %

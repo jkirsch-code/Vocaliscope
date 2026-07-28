@@ -8,7 +8,7 @@ function sampEn = calculateSampleEntropy(signal, templateLength, stdPercentage)
 if isempty(signal) || stdPercentage==0
     sampEn=NaN;
 else
-    sampEn=fastSampEn(signal,templateLength,stdPercentage);
+    sampEn=sampleEntropy.fastSampEn(signal,templateLength,stdPercentage);
 end
 
 
