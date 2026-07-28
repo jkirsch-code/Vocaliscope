@@ -18,7 +18,7 @@ The software consolidates functionality typically distributed across multiple to
 ### Data Import & Export
 
 - **Audio formats:** `.wav`, `.mp3`, `.flac`, `.ogg`, `.opus`, `.m4a`, `.mp4`, `.aifc`, `.aiff`, `.aif`, `.au`
-- **Glottal area waveforms:** `.gaw` (Glottis Analysis Tools format [12])
+- **Glottal area waveforms:** `.gaw` (Glottis Analysis Tools format [25])
 - **Phonovibrogram images:** `.png`, `.bmp`, `.jpg`, `.jpeg`, `.jp2`
 - **Photron high-speed camera:** `.wvd`, `.csv` (Type-A) [13]
 - **Session files:** `.mat` (Vocaliscope format for resuming analysis)
@@ -110,7 +110,7 @@ Creates a new f₀ contour channel with selectable pitch estimation algorithm. 1
 
 - **MATLAB built-in:** NCF, PEF, CEP, LHS, SRH
 - **Third-party:** SWIPE' [8], SHR [6], YIN [7], Bayesian F0 (BF0NLS) [9], YAAPT [10]
-- **Deep learning:** CREPE (DNN capacity: tiny/small/medium/large/full)
+- **Deep learning:** CREPE [27] (DNN capacity: tiny/small/medium/large/full)
 - **Praat-based:** Filtered AC, raw AC, raw CC, filtered CC, SHS, SPINET — each with full Praat parameter control (voicing threshold, octave costs, very accurate mode, etc.)
 
 Configurable min/max f₀, window length, overlap, and missing-data interpolation method.
@@ -400,7 +400,7 @@ Vocaliscope includes multiple pitch tracking algorithms available in parameter c
 | SWIPE' | ✓ | ✓ | [8] |
 | Bayesian F0 (BF0NLS) | ✓ | ✓ | [9] |
 | YAAPT | ✓ | ✓ | [10] |
-| CREPE (deep neural network) | — | ✓ | [19] |
+| CREPE (deep neural network) | — | ✓ | [27] |
 | Praat: filtered cross-correlation | — | ✓ | [1] |
 | Praat: unfiltered cross-correlation | — | ✓ | [1] |
 | Praat: autocorrelation | — | ✓ | [1] |
@@ -448,6 +448,7 @@ Vocaliscope builds upon and includes code from the following open-source tools a
 | [8] | **SWIPE'** | Sawtooth waveform inspired pitch estimation | [kylebgorman/swipe](https://github.com/kylebgorman/swipe) |
 | [9] | **Bayesian F0** | Bayesian pitch tracking using harmonic model | [LimingShi/Bayesian-Pitch-Tracking](https://github.com/LimingShi/Bayesian-Pitch-Tracking-Using-Harmonic-model) |
 | [10] | **YAAPT** | Yet Another Algorithm for Pitch Tracking | Zahorian & Hu, SUNY Binghamton |
+| [27] | **CREPE** | Deep neural network pitch estimation | [marl/crepe](https://github.com/marl/crepe) |
 
 ### Formant Estimation
 
@@ -455,7 +456,7 @@ Vocaliscope builds upon and includes code from the following open-source tools a
 |---|-----------|-------------|---------------------|
 | [11] | **ftrack / TVQCP** | Time-varying linear prediction formant estimation | [njaygowda/ftrack](https://github.com/njaygowda/ftrack) |
 | [12] | **Story & Bunton** | Formant estimation for children | Story & Bunton (2016) |
-| [12] | **GLOAT / SEDREAMS** | GCI detection (used by TVQCP) | Thomas Drugman, Univ. of Mons |
+| [26] | **GLOAT / SEDREAMS** | GCI detection (used by TVQCP) | Thomas Drugman, Univ. of Mons |
 
 ### Inverse Filtering
 
@@ -500,11 +501,44 @@ Vocaliscope builds upon and includes code from the following open-source tools a
 | # | Dependency | Description | Repository / Source |
 |---|-----------|-------------|---------------------|
 | [13] | **Photron FASTCAM Viewer (PFV)** | High-speed camera data format | [Photron Limited](https://photron.com/pfv/) |
+| [25] | **Glottis Analysis Tool (GAT)** | GCI and glottal analysis (C#/.NET) | Kist et al. (2021) |
 | — | **SUBDIR** | Recursive directory listing utility | MATLAB File Exchange |
 
 ### Related Tools (referenced but no code included)
 
 The following tools are related to Vocaliscope's domain but their code is not included in this repository: Praat [1], VoiceSauce [2], Sopran [3], VoiceLab [4], Audacity [24], COVAREP (referenced in inverse filtering method attributions).
+
+## References
+
+| # | Reference | URL / DOI |
+|---|-----------|-----------|
+| [1] | Boersma, P. & Weenink, D. — Praat: doing phonetics by computer | [praat.org](https://www.fon.hum.uva.nl/praat/) |
+| [2] | Shue, Y.-L., Keating, P., Vicenik, C. & Yu, K. — VoiceSauce | [phonetics.ucla.edu](https://www.phonetics.ucla.edu/voicesauce/) |
+| [3] | Granqvist, S. — Sopran: a collection of soprano voice ranges | [tolvan.com](https://www.tolvan.com/index.php?page=/sopran/sopran.php) |
+| [4] | Feinberg, D., Smith, J. & Wolfe, J. — VoiceLab | [Voice-Lab/VoiceLab](https://github.com/Voice-Lab/VoiceLab) |
+| [5] | Arts, L.P.A. & van den Broek, E.L. — fCWT: Fast Continuous Wavelet Transform | [fastlib/fCWT](https://github.com/fastlib/fCWT) |
+| [6] | Sun, X. — Subharmonic pitch determination algorithm | MATLAB File Exchange #1230 |
+| [7] | de Cheveigné, A. & Kawahara, H. — YIN, a fundamental frequency estimator | [mhamilt/yin](https://github.com/mhamilt/yin) |
+| [8] | Camacho, A. & Harris, J.G. — SWIPE': A sawtooth waveform inspired pitch estimator | [kylebgorman/swipe](https://github.com/kylebgorman/swipe) |
+| [9] | Shi, L., Wu, D. & Birkholz, P. — Bayesian pitch tracking using harmonic model | [LimingShi/Bayesian-Pitch-Tracking](https://github.com/LimingShi/Bayesian-Pitch-Tracking-Using-Harmonic-model) |
+| [10] | Zahorian, S.A. & Hu, H. — YAAPT: An algorithm for pitch tracking | SUNY Binghamton |
+| [11] | Gowda, D. et al. — ftrack / TVQCP: Time-varying quasi-closed-phase formant estimation | [njaygowda/ftrack](https://github.com/njaygowda/ftrack) |
+| [12] | Story, B.H. & Bunton, K. — Formant estimation based on spectral filtering | *Speech Communication*, 76, 93–111 (2016). DOI: [10.1016/j.specom.2015.11.001](https://doi.org/10.1016/j.specom.2015.11.001) |
+| [13] | Photron Limited — FASTCAM Viewer (PFV) | [photron.com/pfv](https://photron.com/pfv/) |
+| [14] | Airas, M., Pohjalainen, H. et al. — Aalto Aparat: Inverse filtering toolkit | [research.spa.aalto.fi](http://research.spa.aalto.fi/projects/aparat/) |
+| [15] | Perrotin, O. & McLoughlin, N.V. — GFM-IAIF glottal source estimation | GIPSA-lab, Univ. Grenoble Alpes |
+| [16] | Freixes, M. et al. — GFM-IAIF (OLAF variant) glottal source estimation | *Applied Sciences* (2023) |
+| [17] | Freixes, M. et al. — IOP-IAIF (OLAF variant) glottal source estimation | *Applied Sciences* (2023) |
+| [18] | Yang, L. et al. — AVA: Automatic Vibrato Analysis | [skx300/ava](https://github.com/skx300/ava) |
+| [19] | Cruz, T.L.B. — VibratoScope: Cycle-based vibrato analysis | [tiagolbc/vibratoscope](https://github.com/tiagolbc/vibratoscope) |
+| [20] | Zhang, M. et al. — Vibrato Toolbox: Hilbert AM/FM analysis | [sourceforge.net/projects/vibrato](https://sourceforge.net/projects/vibrato/) |
+| [21] | Kirsch, J. — praatMEX: In-process Praat C++ API via MEX | [jkirsch-code/praat-mex](https://github.com/jkirsch-code/praat-mex) |
+| [22] | Tsanas, A. — GNE / TKEO (Voice Analysis Toolbox) | [ThanasisTsanas/VoiceAnalysisToolbox](https://github.com/ThanasisTsanas/VoiceAnalysisToolbox) |
+| [23] | Paa, F. — fastSampEn: Fast Sample Entropy algorithm | MATLAB File Exchange #48574 (2014) |
+| [24] | Audacity Team — Audacity audio editor | [audacityteam.org](https://www.audacityteam.org/) |
+| [25] | Kist, A.M. et al. — Glottis Analysis Tool (GAT) | DOI: [10.1044/2021_JSLHR-20-00498](https://doi.org/10.1044/2021_JSLHR-20-00498) |
+| [26] | Drugman, T. — GLOAT / SEDREAMS: Glottal closure instant detection | Univ. of Mons |
+| [27] | Kim, J.W., Salamon, J., Li, P. & Bello, J.P. — CREPE: A convolutional representation for pitch estimation | [marl/crepe](https://github.com/marl/crepe). ICASSP 2018 |
 
 ---
 
