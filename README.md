@@ -208,7 +208,7 @@ Features: waveform + onset marker preview, intermediate results display, multi-c
 <summary><b>Inverse Filtering</b></summary>
 
 - **Aalto Aparat** — QCP and IAIF methods [14]
-- **GFM-IAIF** [16], **IOP-IAIF** [17], **MCLP** (with OLAF variants [17])
+- **GFM-IAIF** [16], **IOP-IAIF** [17], **MCLP** [33] (with OLAF variants [16], [17])
 - Configurable vocal tract order, glottal source order, window length, overlap, leaky integration coefficient
 </details>
 
@@ -393,11 +393,11 @@ Vocaliscope includes multiple pitch (tracking) algorithms available in parameter
 
 | Algorithm | Parameter Calculation | Right-Click Menu | Reference |
 |-----------|:--------------------:|:----------------:|-----------|
-| NCF — Normalized Correlation Function (default) | ✓ | ✓ | [28] |
-| PEF — Pitch Estimation Filter | ✓ | ✓ | [29] |
-| CEP — Cepstrum Pitch Determination | ✓ | ✓ | [30] |
-| LHS — Log-Harmonic Summation | ✓ | ✓ | [31] |
-| SRH — Summation of Residual Harmonics | ✓ | ✓ | [32] |
+| NCF — Normalized Correlation Function (default) | ✓ | ✓ | [28] · [MATLAB docs](https://www.mathworks.com/help/audio/ref/pitch.html) |
+| PEF — Pitch Estimation Filter | ✓ | ✓ | [29] · [MATLAB docs](https://www.mathworks.com/help/audio/ref/pitch.html) |
+| CEP — Cepstrum Pitch Determination | ✓ | ✓ | [30] · [MATLAB docs](https://www.mathworks.com/help/audio/ref/pitch.html) |
+| LHS — Log-Harmonic Summation | ✓ | ✓ | [31] · [MATLAB docs](https://www.mathworks.com/help/audio/ref/pitch.html) |
+| SRH — Summation of Residual Harmonics | ✓ | ✓ | [32] · [MATLAB docs](https://www.mathworks.com/help/audio/ref/pitch.html) |
 | SHR (Subharmonic) | ✓ | ✓ | [6] |
 | YIN | — | ✓ | [7] |
 | SWIPE' | ✓ | ✓ | [8] |
@@ -458,18 +458,18 @@ Vocaliscope builds upon and includes code from the following open-source tools a
 | # | Dependency | Description | Repository / Source |
 |---|-----------|-------------|---------------------|
 | [11] | **ftrack / TVQCP** | Time-varying linear prediction formant estimation | [njaygowda/ftrack](https://github.com/njaygowda/ftrack) |
-| [12] | **Story & Bunton** | Formant estimation for children | Story & Bunton (2016) |
-| [26] | **GLOAT / SEDREAMS** | GCI detection (used by TVQCP) | Thomas Drugman, Univ. of Mons |
+| [12] | **Story & Bunton** | Formant estimation for children | [TrackChildFmts.m](https://sites.arizona.edu/sapl/research/formant-tracking-in-childrens-speech/) (Arizona SAPL) |
+| [26] | **GLOAT / SEDREAMS** | GCI detection (used by TVQCP) | [covarep/covarep](https://github.com/covarep/covarep) (hosts `gci_sedreams.m`) |
 
 ### Inverse Filtering
 
 | # | Dependency | Description | Repository / Source |
 |---|-----------|-------------|---------------------|
 | [14] | **Aalto Aparat** | Inverse filtering toolkit (QCP, IAIF) | [Aalto University](http://research.spa.aalto.fi/projects/aparat/) |
-| [15] | **GFM-IAIF** | Glottal source estimation | Olivier Perrotin, GIPSA-lab |
-| [16] | **GFM-IAIF (OLAF variant)** | Extended glottal source estimation | Freixes et al. (2023) |
-| [17] | **IOP-IAIF (OLAF variant)** | Glottal source estimation | Freixes et al. (2023) |
-| — | **MCLP** | Maximum Correntropy Linear Prediction | IEEE/ACM TASLP 2024 |
+| [15] | **GFM-IAIF** | Glottal source estimation | [operrotin/GFM-IAIF](https://github.com/operrotin/GFM-IAIF) |
+| [16] | **GFM-IAIF (OLAF variant)** | Extended glottal source estimation | [SpeechSalleBcn/inverse-filtering-evaluation](https://github.com/SpeechSalleBcn/inverse-filtering-evaluation) |
+| [17] | **IOP-IAIF (OLAF variant)** | Glottal source estimation | [SpeechSalleBcn/inverse-filtering-evaluation](https://github.com/SpeechSalleBcn/inverse-filtering-evaluation) |
+| [33] | **MCLP** | Maximum Correntropy Linear Prediction | [Izalazar/MCLP](https://github.com/Izalazar/MCLP) |
 
 ### Vibrato Analysis
 
@@ -484,7 +484,7 @@ Vocaliscope builds upon and includes code from the following open-source tools a
 | # | Dependency | Description | Repository / Source |
 |---|-----------|-------------|---------------------|
 | [22] | **GNE / TKEO** | Glottal-to-Noise Excitation Ratio | Thanasis Tsanas, [Voice Analysis Toolbox](https://github.com/ThanasisTsanas/VoiceAnalysisToolbox) |
-| [23] | **fastSampEn** | Fast Sample Entropy algorithm | Filippo Paa (2014) |
+| [23] | **fastSampEn** | Fast Sample Entropy algorithm | [File Exchange #48574](https://de.mathworks.com/matlabcentral/fileexchange/48574-fast-sample-entropy-saenkd-dim-r-sig) |
 
 ### Signal Processing & Visualization
 
@@ -505,48 +505,51 @@ Vocaliscope builds upon and includes code from the following open-source tools a
 |---|-----------|-------------|---------------------|
 | [13] | **Photron FASTCAM Viewer (PFV)** | High-speed camera data format | [Photron Limited](https://photron.com/pfv/) |
 | [25] | **Glottis Analysis Tool (GAT)** | GCI and glottal analysis (C#/.NET) | Kist et al. (2021) |
-| — | **SUBDIR** | Recursive directory listing utility | MATLAB File Exchange |
+| [34] | **SUBDIR** | Recursive directory listing utility | [File Exchange #15859](https://www.mathworks.com/matlabcentral/fileexchange/15859-subdir-a-recursive-file-search) · [kakearney/subdir-pkg](https://github.com/kakearney/subdir-pkg) |
 
 ### Related Tools (referenced but no code included)
 
-The following tools are related to Vocaliscope's domain but their code is not included in this repository: Praat [1], VoiceSauce [2], Sopran [3], VoiceLab [4], Audacity [24], COVAREP (referenced in inverse filtering method attributions).
+The following tools are related to Vocaliscope's domain but their code is not included in this repository: Praat [1], VoiceSauce [2], Sopran [3], VoiceLab [4], Audacity [24], COVAREP [35] (referenced in inverse filtering method attributions).
 
 ## References
 
 | # | Reference | URL / DOI |
 |---|-----------|-----------|
-| [1] | Boersma, P. & Weenink, D. — Praat: doing phonetics by computer | [praat.org](https://www.fon.hum.uva.nl/praat/) |
-| [2] | Shue, Y.-L., Keating, P., Vicenik, C. & Yu, K. — VoiceSauce | [phonetics.ucla.edu](https://www.phonetics.ucla.edu/voicesauce/) |
+| [1] | Boersma, P. & Weenink, D. — Praat: doing phonetics by computer | [praat.org](https://www.fon.hum.uva.nl/praat/) · Boersma & van Heuven, *Glot International*, 5(9/10), 1–7 (2001) |
+| [2] | Shue, Y.-L., Keating, P., Vicenik, C. & Yu, K. — VoiceSauce | [phonetics.ucla.edu](https://www.phonetics.ucla.edu/voicesauce/) · Shue et al., *Proc. ICPhS XVII*, 1846–1849 (2011) |
 | [3] | Granqvist, S. — Sopran: a collection of soprano voice ranges | [tolvan.com](https://www.tolvan.com/index.php?page=/sopran/sopran.php) |
-| [4] | Feinberg, D., Smith, J. & Wolfe, J. — VoiceLab | [Voice-Lab/VoiceLab](https://github.com/Voice-Lab/VoiceLab) |
-| [5] | Arts, L.P.A. & van den Broek, E.L. — fCWT: Fast Continuous Wavelet Transform | [fastlib/fCWT](https://github.com/fastlib/fCWT) |
-| [6] | Sun, X. — Subharmonic pitch determination algorithm | MATLAB File Exchange #1230 |
-| [7] | de Cheveigné, A. & Kawahara, H. — YIN, a fundamental frequency estimator | [mhamilt/yin](https://github.com/mhamilt/yin) |
-| [8] | Camacho, A. & Harris, J.G. — SWIPE': A sawtooth waveform inspired pitch estimator | [kylebgorman/swipe](https://github.com/kylebgorman/swipe) |
-| [9] | Shi, L., Wu, D. & Birkholz, P. — Bayesian pitch tracking using harmonic model | [LimingShi/Bayesian-Pitch-Tracking](https://github.com/LimingShi/Bayesian-Pitch-Tracking-Using-Harmonic-model) |
-| [10] | Zahorian, S.A. & Hu, H. — YAAPT: An algorithm for pitch tracking | SUNY Binghamton |
-| [11] | Gowda, D. et al. — ftrack / TVQCP: Time-varying quasi-closed-phase formant estimation | [njaygowda/ftrack](https://github.com/njaygowda/ftrack) |
-| [12] | Story, B.H. & Bunton, K. — Formant estimation based on spectral filtering | *Speech Communication*, 76, 93–111 (2016). DOI: [10.1016/j.specom.2015.11.001](https://doi.org/10.1016/j.specom.2015.11.001) |
+| [4] | Feinberg, D., Cook, O. & Yassine, E.K. — VoiceLab: Automated reproducible acoustic analysis | [Voice-Lab/VoiceLab](https://github.com/Voice-Lab/VoiceLab) · Feinberg & Cook, *PsyArXiv* (2020). DOI: [10.31234/osf.io/v5uxf](https://doi.org/10.31234/osf.io/v5uxf) |
+| [5] | Arts, L.P.A. & van den Broek, E.L. — fCWT: Fast Continuous Wavelet Transform | [fastlib/fCWT](https://github.com/fastlib/fCWT) · Arts & van den Broek, *Nature Computational Science*, 2, 47–58 (2022). DOI: [10.1038/s43588-021-00183-z](https://doi.org/10.1038/s43588-021-00183-z) |
+| [6] | Sun, X. — Subharmonic pitch determination algorithm | [File Exchange #1230](https://de.mathworks.com/matlabcentral/fileexchange/1230-pitch-determination-algorithm) · *ICSLP 2000*, Beijing |
+| [7] | de Cheveigné, A. & Kawahara, H. — YIN, a fundamental frequency estimator | [mhamilt/yin](https://github.com/mhamilt/yin) · de Cheveigné & Kawahara, *JASA*, 111(4), 1917–1930 (2002). DOI: [10.1121/1.1458024](https://doi.org/10.1121/1.1458024) |
+| [8] | Camacho, A. & Harris, J.G. — SWIPE': A sawtooth waveform inspired pitch estimator | [kylebgorman/swipe](https://github.com/kylebgorman/swipe) · Camacho & Harris, *JASA*, 124(3), 1638–1652 (2008). DOI: [10.1121/1.2951592](https://doi.org/10.1121/1.2951592) |
+| [9] | Shi, L., Wu, D. & Birkholz, P. — Bayesian pitch tracking using harmonic model | [LimingShi/Bayesian-Pitch-Tracking](https://github.com/LimingShi/Bayesian-Pitch-Tracking-Using-Harmonic-model) · Shi et al., *IEEE/ACM TASLP*, 27(11), 1737–1751 (2019). DOI: [10.1109/TASLP.2019.2930917](https://doi.org/10.1109/TASLP.2019.2930917) |
+| [10] | Zahorian, S.A. & Hu, H. — YAAPT: An algorithm for pitch tracking | [Binghamton YAAPT page](https://web.archive.org/web/20250613152848/https://www.ws.binghamton.edu/zahorian/yaapt.htm) · *JASA* 123(6), 4559–4571 (2008). DOI: [10.1121/1.2916590](https://doi.org/10.1121/1.2916590) |
+| [11] | Gowda, D., Kadiri, S.R., Story, B. & Alku, P. — ftrack / TVQCP: Time-varying quasi-closed-phase formant estimation | [njaygowda/ftrack](https://github.com/njaygowda/ftrack) · *IEEE/ACM TASLP*, 28, 1901–1914 (2020). DOI: [10.1109/TASLP.2020.3000037](https://doi.org/10.1109/TASLP.2020.3000037) |
+| [12] | Story, B.H. & Bunton, K. — Formant estimation based on spectral filtering | *Speech Communication*, 76, 93–111 (2016). DOI: [10.1016/j.specom.2015.11.001](https://doi.org/10.1016/j.specom.2015.11.001) · Code: [TrackChildFmts.m](https://sites.arizona.edu/sapl/research/formant-tracking-in-childrens-speech/) (Arizona SAPL) |
 | [13] | Photron Limited — FASTCAM Viewer (PFV) | [photron.com/pfv](https://photron.com/pfv/) |
-| [14] | Airas, M., Pohjalainen, H. et al. — Aalto Aparat: Inverse filtering toolkit | [research.spa.aalto.fi](http://research.spa.aalto.fi/projects/aparat/) |
-| [15] | Perrotin, O. & McLoughlin, N.V. — GFM-IAIF glottal source estimation | GIPSA-lab, Univ. Grenoble Alpes |
-| [16] | Freixes, M. et al. — GFM-IAIF (OLAF variant) glottal source estimation | *Applied Sciences* (2023) |
-| [17] | Freixes, M. et al. — IOP-IAIF (OLAF variant) glottal source estimation | *Applied Sciences* (2023) |
-| [18] | Yang, L. et al. — AVA: Automatic Vibrato Analysis | [skx300/ava](https://github.com/skx300/ava) |
-| [19] | Cruz, T.L.B. — VibratoScope: Cycle-based vibrato analysis | [tiagolbc/vibratoscope](https://github.com/tiagolbc/vibratoscope) |
-| [20] | Zhang, M. et al. — Vibrato Toolbox: Hilbert AM/FM analysis | [sourceforge.net/projects/vibrato](https://sourceforge.net/projects/vibrato/) |
+| [14] | Alku, P., Pohjalainen, H. & Airaksinen, M. — Aalto Aparat: Inverse filtering toolkit | [research.spa.aalto.fi](http://research.spa.aalto.fi/projects/aparat/) · Alku, Pohjalainen & Airaksinen, *Subsidia: Tools and Resources for Speech Sciences*, 21, p. 23 (2017) |
+| [15] | Perrotin, O. & McLoughlin, I.V. — GFM-IAIF glottal source estimation | [operrotin/GFM-IAIF](https://github.com/operrotin/GFM-IAIF) · Perrotin & McLoughlin, *Proc. ICASSP*, 7160–7164 (2019). DOI: [10.1109/ICASSP.2019.8682625](https://doi.org/10.1109/ICASSP.2019.8682625) |
+| [16] | Freixes, M. et al. — GFM-IAIF (OLAF variant) glottal source estimation | [SpeechSalleBcn/inverse-filtering-evaluation](https://github.com/SpeechSalleBcn/inverse-filtering-evaluation) · *Applied Sciences* 13(15), 8775 (2023). DOI: [10.3390/app13158775](https://doi.org/10.3390/app13158775) |
+| [17] | Freixes, M. et al. — IOP-IAIF (OLAF variant) glottal source estimation | [SpeechSalleBcn/inverse-filtering-evaluation](https://github.com/SpeechSalleBcn/inverse-filtering-evaluation) · *Applied Sciences* 13(15), 8775 (2023). DOI: [10.3390/app13158775](https://doi.org/10.3390/app13158775) |
+| [18] | Yang, L., Rajab, K.Z. & Chew, E. — AVA: Automatic Vibrato Analysis | [skx300/ava](https://github.com/skx300/ava) · [ISMIR 2016 PDF](https://wp.nyu.edu/ismir2016/wp-content/uploads/sites/2294/2016/07/314_Paper.pdf) |
+| [19] | Cruz, T.L.B. — VibratoScope: Cycle-based vibrato analysis | [tiagolbc/vibratoscope](https://github.com/tiagolbc/vibratoscope) · *Zenodo* (2025). DOI: [10.5281/zenodo.15519845](https://doi.org/10.5281/zenodo.15519845) |
+| [20] | Zhang, M. et al. — Vibrato Toolbox: Hilbert AM/FM analysis | [sourceforge.net/projects/vibrato](https://sourceforge.net/projects/vibrato/) · Zhang et al., *J. Audio Eng. Soc.*, 65(5), 408–422 (2017). DOI: [10.17743/jaes.2017.0010](https://doi.org/10.17743/jaes.2017.0010) |
 | [21] | Kirsch, J. — praatMEX: In-process Praat C++ API via MEX | [jkirsch-code/praat-mex](https://github.com/jkirsch-code/praat-mex) |
-| [22] | Tsanas, A. — GNE / TKEO (Voice Analysis Toolbox) | [ThanasisTsanas/VoiceAnalysisToolbox](https://github.com/ThanasisTsanas/VoiceAnalysisToolbox) |
-| [23] | Paa, F. — fastSampEn: Fast Sample Entropy algorithm | MATLAB File Exchange #48574 (2014) |
+| [22] | Tsanas, A. — GNE / TKEO (Voice Analysis Toolbox) | [ThanasisTsanas/VoiceAnalysisToolbox](https://github.com/ThanasisTsanas/VoiceAnalysisToolbox) · Tsanas, *Proc. MAVEBA*, 37–40 (2013) |
+| [23] | Paa, F. — fastSampEn: Fast Sample Entropy algorithm | [File Exchange #48574](https://de.mathworks.com/matlabcentral/fileexchange/48574-fast-sample-entropy-saenkd-dim-r-sig) · Richman & Moorman, *Am. J. Physiol. Heart Circ. Physiol.*, 278(6), H2039–H2049 (2000). DOI: [10.1152/ajpheart.2000.278.6.H2039](https://doi.org/10.1152/ajpheart.2000.278.6.H2039) |
 | [24] | Audacity Team — Audacity audio editor | [audacityteam.org](https://www.audacityteam.org/) |
-| [25] | Kist, A.M. et al. — Glottis Analysis Tool (GAT) | DOI: [10.1044/2021_JSLHR-20-00498](https://doi.org/10.1044/2021_JSLHR-20-00498) |
-| [26] | Drugman, T. — GLOAT / SEDREAMS: Glottal closure instant detection | Univ. of Mons |
-| [27] | Kim, J.W., Salamon, J., Li, P. & Bello, J.P. — CREPE: A convolutional representation for pitch estimation | [marl/crepe](https://github.com/marl/crepe). ICASSP 2018 |
-| [28] | Atal, B.S. — Automatic speaker recognition based on pitch contours | *J. Acoust. Soc. Am.*, 52(6B), 1687–1697 (1972). DOI: [10.1121/1.1913303](https://doi.org/10.1121/1.1913303) |
-| [29] | Gonzalez, S. & Brookes, M. — A pitch estimation filter robust to high levels of noise (PEFAC) | *Proc. EUSIPCO*, 451–455 (2011) |
-| [30] | Noll, A.M. — Cepstrum pitch determination | *J. Acoust. Soc. Am.*, 41(2), 293–309 (1967). DOI: [10.1121/1.1910339](https://doi.org/10.1121/1.1910339) |
-| [31] | Hermes, D.J. — Measurement of pitch by subharmonic summation | *J. Acoust. Soc. Am.*, 83(1), 257–264 (1988). DOI: [10.1121/1.396427](https://doi.org/10.1121/1.396427) |
-| [32] | Drugman, T. & Alwan, A. — Joint robust voicing detection and pitch estimation based on residual harmonics | *Proc. INTERSPEECH*, 1973–1976 (2011). DOI: [10.21437/Interspeech.2011-519](https://doi.org/10.21437/Interspeech.2011-519) |
+| [25] | Kist, A.M. et al. — Glottis Analysis Tool (GAT) | DOI: [10.1044/2021_JSLHR-20-00498](https://doi.org/10.1044/2021_JSLHR-20-00498) · Code: [GAT software](https://www.hno-klinik.uk-erlangen.de/phoniatrie/forschung/computational-medicine/gat-software/) (on request) |
+| [26] | Drugman, T. — GLOAT / SEDREAMS: Glottal closure instant detection | [covarep/covarep](https://github.com/covarep/covarep) (hosts `gci_sedreams.m`) · Drugman et al., *IEEE/ACM TASLP*, 20(3), 994–1006 (2012). DOI: [10.1109/TASL.2011.2170835](https://doi.org/10.1109/TASL.2011.2170835) |
+| [27] | Kim, J.W., Salamon, J., Li, P. & Bello, J.P. — CREPE: A convolutional representation for pitch estimation | [marl/crepe](https://github.com/marl/crepe) · *Proc. ICASSP*, 161–165 (2018). DOI: [10.1109/ICASSP.2018.8461329](https://doi.org/10.1109/ICASSP.2018.8461329) |
+| [28] | Atal, B.S. — Automatic speaker recognition based on pitch contours | *J. Acoust. Soc. Am.*, 52(6B), 1687–1697 (1972). DOI: [10.1121/1.1913303](https://doi.org/10.1121/1.1913303) · [MATLAB docs](https://www.mathworks.com/help/audio/ref/pitch.html) |
+| [29] | Gonzalez, S. & Brookes, M. — A pitch estimation filter robust to high levels of noise (PEFAC) | [EUSIPCO 2011 PDF](https://www.eurasip.org/Proceedings/Eusipco/Eusipco2011/papers/1569423085.pdf) · *IEEE/ACM TASLP*, 22(2), 518–530 (2014). DOI: [10.1109/TASLP.2013.2295918](https://doi.org/10.1109/TASLP.2013.2295918) · [MATLAB docs](https://www.mathworks.com/help/audio/ref/pitch.html) |
+| [30] | Noll, A.M. — Cepstrum pitch determination | *J. Acoust. Soc. Am.*, 41(2), 293–309 (1967). DOI: [10.1121/1.1910339](https://doi.org/10.1121/1.1910339) · [MATLAB docs](https://www.mathworks.com/help/audio/ref/pitch.html) |
+| [31] | Hermes, D.J. — Measurement of pitch by subharmonic summation | *J. Acoust. Soc. Am.*, 83(1), 257–264 (1988). DOI: [10.1121/1.396427](https://doi.org/10.1121/1.396427) · [MATLAB docs](https://www.mathworks.com/help/audio/ref/pitch.html) |
+| [32] | Drugman, T. & Alwan, A. — Joint robust voicing detection and pitch estimation based on residual harmonics | *Proc. INTERSPEECH*, 1973–1976 (2011). DOI: [10.21437/Interspeech.2011-519](https://doi.org/10.21437/Interspeech.2011-519) · [MATLAB docs](https://www.mathworks.com/help/audio/ref/pitch.html) |
+| [33] | Zalazar, A.L. et al. — MCLP: Maximum Correntropy Linear Prediction | [Izalazar/MCLP](https://github.com/Izalazar/MCLP) · *IEEE/ACM TASLP*, 33, 152–162 (2025). DOI: [10.1109/TASLP.2024.3512187](https://doi.org/10.1109/TASLP.2024.3512187) |
+| [34] | Kearney, K. — subdir: Recursive directory listing utility | [File Exchange #15859](https://www.mathworks.com/matlabcentral/fileexchange/15859-subdir-a-recursive-file-search) · [kakearney/subdir-pkg](https://github.com/kakearney/subdir-pkg) |
+| [35] | Degottex, G., Kane, J., Drugman, T., Raitio, T. & Scherer, S. — COVAREP: A collaborative voice analysis repository for speech technologies | [covarep/covarep](https://github.com/covarep/covarep) · *Proc. ICASSP*, 960–964 (2014). DOI: [10.1109/ICASSP.2014.6853739](https://doi.org/10.1109/ICASSP.2014.6853739) |
 
 ---
 
