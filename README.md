@@ -387,19 +387,22 @@ The following parameter categories are implemented in the code but currently hid
 
 ---
 
-## Pitch Tracking Algorithms
+## Pitch (Tracking) Algorithms
 
-Vocaliscope includes multiple pitch tracking algorithms available in parameter calculation and/or via right-click menu:
+Vocaliscope includes multiple pitch (tracking) algorithms available in parameter calculation and/or via right-click menu:
 
 | Algorithm | Parameter Calculation | Right-Click Menu | Reference |
 |-----------|:--------------------:|:----------------:|-----------|
-| Autocorrelation (default) | ✓ | ✓ | — |
-| Cross-correlation | ✓ | ✓ | — |
+| NCF — Normalized Correlation Function (default) | ✓ | ✓ | [28] |
+| PEF — Pitch Estimation Filter | ✓ | ✓ | [29] |
+| CEP — Cepstrum Pitch Determination | ✓ | ✓ | [30] |
+| LHS — Log-Harmonic Summation | ✓ | ✓ | [31] |
+| SRH — Summation of Residual Harmonics | ✓ | ✓ | [32] |
 | SHR (Subharmonic) | ✓ | ✓ | [6] |
-| YIN | ✓ | ✓ | [7] |
+| YIN | — | ✓ | [7] |
 | SWIPE' | ✓ | ✓ | [8] |
-| Bayesian F0 (BF0NLS) | ✓ | ✓ | [9] |
-| YAAPT | ✓ | ✓ | [10] |
+| Bayesian F0 (BF0NLS) | — | ✓ | [9] |
+| YAAPT | — | ✓ | [10] |
 | CREPE (deep neural network) | — | ✓ | [27] |
 | Praat: filtered cross-correlation | — | ✓ | [1] |
 | Praat: unfiltered cross-correlation | — | ✓ | [1] |
@@ -407,7 +410,7 @@ Vocaliscope includes multiple pitch tracking algorithms available in parameter c
 | Praat: SHS | — | ✓ | [1] |
 | Praat: SPINET | — | ✓ | [1] |
 
-Praat-based methods are implemented via **praatMEX** [21] — a C++ MEX function that links the Praat core as a static library.
+The NCF, PEF, CEP, LHS, and SRH methods are implemented via MATLAB's built-in `pitch()` function (Audio Toolbox). Praat-based methods are implemented via **praatMEX** [21] — a C++ MEX function that links the Praat core as a static library.
 
 ---
 
@@ -539,6 +542,11 @@ The following tools are related to Vocaliscope's domain but their code is not in
 | [25] | Kist, A.M. et al. — Glottis Analysis Tool (GAT) | DOI: [10.1044/2021_JSLHR-20-00498](https://doi.org/10.1044/2021_JSLHR-20-00498) |
 | [26] | Drugman, T. — GLOAT / SEDREAMS: Glottal closure instant detection | Univ. of Mons |
 | [27] | Kim, J.W., Salamon, J., Li, P. & Bello, J.P. — CREPE: A convolutional representation for pitch estimation | [marl/crepe](https://github.com/marl/crepe). ICASSP 2018 |
+| [28] | Atal, B.S. — Automatic speaker recognition based on pitch contours | *J. Acoust. Soc. Am.*, 52(6B), 1687–1697 (1972). DOI: [10.1121/1.1913303](https://doi.org/10.1121/1.1913303) |
+| [29] | Gonzalez, S. & Brookes, M. — A pitch estimation filter robust to high levels of noise (PEFAC) | *Proc. EUSIPCO*, 451–455 (2011) |
+| [30] | Noll, A.M. — Cepstrum pitch determination | *J. Acoust. Soc. Am.*, 41(2), 293–309 (1967). DOI: [10.1121/1.1910339](https://doi.org/10.1121/1.1910339) |
+| [31] | Hermes, D.J. — Measurement of pitch by subharmonic summation | *J. Acoust. Soc. Am.*, 83(1), 257–264 (1988). DOI: [10.1121/1.396427](https://doi.org/10.1121/1.396427) |
+| [32] | Drugman, T. & Alwan, A. — Joint robust voicing detection and pitch estimation based on residual harmonics | *Proc. INTERSPEECH*, 1973–1976 (2011). DOI: [10.21437/Interspeech.2011-519](https://doi.org/10.21437/Interspeech.2011-519) |
 
 ---
 
