@@ -2,7 +2,7 @@
 
 **An open-source MATLAB App Designer application for integrated analysis of multi-channel voice recordings.**
 
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
+[![License: GPL v3 or later](https://img.shields.io/badge/License-GPL--3.0--or--later-blue.svg)](LICENSE)
 [![MATLAB 2026a+](https://img.shields.io/badge/MATLAB-2026a%2B-orange.svg)](https://www.mathworks.com)
 
 ---
@@ -582,7 +582,7 @@ See [`CITATION.cff`](CITATION.cff) for machine-readable citation metadata.
 
 ## License
 
-This project is licensed under the [GNU General Public License v3.0](LICENSE).
+This project is licensed under the [GNU General Public License v3.0](LICENSE) **or any later version** (GPL-3.0-or-later).
 
 ---
 
