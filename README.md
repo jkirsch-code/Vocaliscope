@@ -410,7 +410,7 @@ Vocaliscope includes multiple pitch (tracking) algorithms available in parameter
 | Praat: SHS | — | ✓ | [1] |
 | Praat: SPINET | — | ✓ | [1] |
 
-The NCF, PEF, CEP, LHS, and SRH methods are implemented via MATLAB's built-in `pitch()` function (Audio Toolbox). Praat-based methods are implemented via **praatMEX** [21] — a C++ MEX function that links the Praat core as a static library.
+The NCF, PEF, CEP, LHS, and SRH methods are implemented via MATLAB's built-in `pitch()` function (Audio Toolbox). The CREPE method is implemented via MATLAB's `pitchnn()` function (Audio Toolbox + Deep Learning Toolbox); the pretrained network `.mat` files are downloaded automatically on first use (see [27]). Praat-based methods are implemented via **praatMEX** [21] — a C++ MEX function that links the Praat core as a static library.
 
 ---
 
@@ -450,8 +450,8 @@ Vocaliscope builds upon and includes code from the following open-source tools a
 | [7] | **YIN** | YIN pitch estimator (derived from AaltoAparat) | [mhamilt/yin](https://github.com/mhamilt/yin) |
 | [8] | **SWIPE'** | Sawtooth waveform inspired pitch estimation | [kylebgorman/swipe](https://github.com/kylebgorman/swipe) |
 | [9] | **Bayesian F0** | Bayesian pitch tracking using harmonic model | [LimingShi/Bayesian-Pitch-Tracking](https://github.com/LimingShi/Bayesian-Pitch-Tracking-Using-Harmonic-model) |
-| [10] | **YAAPT** | Yet Another Algorithm for Pitch Tracking | Zahorian & Hu, SUNY Binghamton |
-| [27] | **CREPE** | Deep neural network pitch estimation | [marl/crepe](https://github.com/marl/crepe) |
+| [10] | **YAAPT** | Yet Another Algorithm for Pitch Tracking | [Binghamton YAAPT page](https://web.archive.org/web/20250613152848/https://www.ws.binghamton.edu/zahorian/yaapt.htm) · Zahorian & Hu, *JASA*, 123(6), 4559–4571 (2008). DOI: [10.1121/1.2916590](https://doi.org/10.1121/1.2916590) |
+| [27] | **CREPE** | Deep neural network pitch estimation (via MATLAB `pitchnn`) | [MATLAB `pitchnn` docs](https://www.mathworks.com/help/audio/ref/pitchnn.html) · [CREPE model (.mat)](https://ssd.mathworks.com/supportfiles/audio/crepe.zip) |
 
 ### Formant Estimation
 
@@ -477,7 +477,7 @@ Vocaliscope builds upon and includes code from the following open-source tools a
 |---|-----------|-------------|---------------------|
 | [18] | **AVA** | Automatic Vibrato Analysis (FDM-based) | [skx300/ava](https://github.com/skx300/ava) |
 | [19] | **VibratoScope** | Cycle-based vibrato analysis | [tiagolbc/vibratoscope](https://github.com/tiagolbc/vibratoscope) |
-| [20] | **Vibrato Toolbox** | Hilbert AM/FM vibrato analysis | Zhang et al., Univ. of Rochester |
+| [20] | **Vibrato Toolbox** | Hilbert AM/FM vibrato analysis | [sourceforge.net/projects/vibrato](https://sourceforge.net/projects/vibrato/) · Zhang et al., *J. Audio Eng. Soc.*, 65(5), 408–422 (2017). DOI: [10.17743/jaes.2017.0010](https://doi.org/10.17743/jaes.2017.0010) |
 
 ### Noise & Nonlinear Analysis
 
@@ -504,7 +504,7 @@ Vocaliscope builds upon and includes code from the following open-source tools a
 | # | Dependency | Description | Repository / Source |
 |---|-----------|-------------|---------------------|
 | [13] | **Photron FASTCAM Viewer (PFV)** | High-speed camera data format | [Photron Limited](https://photron.com/pfv/) |
-| [25] | **Glottis Analysis Tool (GAT)** | GCI and glottal analysis (C#/.NET) | Kist et al. (2021) |
+| [25] | **Glottis Analysis Tool (GAT)** | GCI and glottal analysis (C#/.NET) | Kist et al., *J. Speech Lang. Hear. Res.* (2021). DOI: [10.1044/2021_JSLHR-20-00498](https://doi.org/10.1044/2021_JSLHR-20-00498) · [GAT software](https://www.hno-klinik.uk-erlangen.de/phoniatrie/forschung/computational-medicine/gat-software/) (on request) |
 | [34] | **SUBDIR** | Recursive directory listing utility | [File Exchange #15859](https://www.mathworks.com/matlabcentral/fileexchange/15859-subdir-a-recursive-file-search) · [kakearney/subdir-pkg](https://github.com/kakearney/subdir-pkg) |
 
 ### Related Tools (referenced but no code included)
@@ -541,7 +541,7 @@ The following tools are related to Vocaliscope's domain but their code is not in
 | [24] | Audacity Team — Audacity audio editor | [audacityteam.org](https://www.audacityteam.org/) |
 | [25] | Kist, A.M. et al. — Glottis Analysis Tool (GAT) | DOI: [10.1044/2021_JSLHR-20-00498](https://doi.org/10.1044/2021_JSLHR-20-00498) · Code: [GAT software](https://www.hno-klinik.uk-erlangen.de/phoniatrie/forschung/computational-medicine/gat-software/) (on request) |
 | [26] | Drugman, T. — GLOAT / SEDREAMS: Glottal closure instant detection | [covarep/covarep](https://github.com/covarep/covarep) (hosts `gci_sedreams.m`) · Drugman et al., *IEEE/ACM TASLP*, 20(3), 994–1006 (2012). DOI: [10.1109/TASL.2011.2170835](https://doi.org/10.1109/TASL.2011.2170835) |
-| [27] | Kim, J.W., Salamon, J., Li, P. & Bello, J.P. — CREPE: A convolutional representation for pitch estimation | [marl/crepe](https://github.com/marl/crepe) · *Proc. ICASSP*, 161–165 (2018). DOI: [10.1109/ICASSP.2018.8461329](https://doi.org/10.1109/ICASSP.2018.8461329) |
+| [27] | Kim, J.W., Salamon, J., Li, P. & Bello, J.P. — CREPE: A convolutional representation for pitch estimation | [MATLAB `pitchnn` docs](https://www.mathworks.com/help/audio/ref/pitchnn.html) · [CREPE model (.mat)](https://ssd.mathworks.com/supportfiles/audio/crepe.zip) · Kim et al., *Proc. ICASSP*, 161–165 (2018). DOI: [10.1109/ICASSP.2018.8461329](https://doi.org/10.1109/ICASSP.2018.8461329) |
 | [28] | Atal, B.S. — Automatic speaker recognition based on pitch contours | *J. Acoust. Soc. Am.*, 52(6B), 1687–1697 (1972). DOI: [10.1121/1.1913303](https://doi.org/10.1121/1.1913303) · [MATLAB docs](https://www.mathworks.com/help/audio/ref/pitch.html) |
 | [29] | Gonzalez, S. & Brookes, M. — A pitch estimation filter robust to high levels of noise (PEFAC) | [EUSIPCO 2011 PDF](https://www.eurasip.org/Proceedings/Eusipco/Eusipco2011/papers/1569423085.pdf) · *IEEE/ACM TASLP*, 22(2), 518–530 (2014). DOI: [10.1109/TASLP.2013.2295918](https://doi.org/10.1109/TASLP.2013.2295918) · [MATLAB docs](https://www.mathworks.com/help/audio/ref/pitch.html) |
 | [30] | Noll, A.M. — Cepstrum pitch determination | *J. Acoust. Soc. Am.*, 41(2), 293–309 (1967). DOI: [10.1121/1.1910339](https://doi.org/10.1121/1.1910339) · [MATLAB docs](https://www.mathworks.com/help/audio/ref/pitch.html) |
