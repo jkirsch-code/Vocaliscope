@@ -479,7 +479,12 @@ classdef interactiveFiltering < matlab.apps.AppBase
 
 %                     paddedAndFilteredComplementaryData=filtfilt(app.lastSuccessfullComplementaryFilter,paddedData);
                 else
-                    paddedAndFilteredData=filter(app.lastSuccessfullFilter,paddedData);
+                    if ~isa(app.lastSuccessfullFilter,'dsp.SOSFilter') % if not comb
+                        paddedAndFilteredData=filter(app.lastSuccessfullFilter,paddedData);
+                    else
+                        paddedAndFilteredData=app.lastSuccessfullFilter(paddedData);
+                    end
+
 %                     paddedAndFilteredComplementaryData=filter(app.lastSuccessfullComplementaryFilter,paddedData);
                 end
 
@@ -598,15 +603,12 @@ classdef interactiveFiltering < matlab.apps.AppBase
             if strcmp(value,'ellip')
                 app.matchexactlyDropDown.Items={'passband','stopband','both'};
                 app.matchexactlyDropDown.Value='both';
+            elseif strcmp(value,'cheby1')
+                app.matchexactlyDropDown.Items={'passband','stopband'};
+                app.matchexactlyDropDown.Value='passband';
             else
                 app.matchexactlyDropDown.Items={'passband','stopband'};
-
-                if strcmp(app.DesignMethodDropDown.Value,'Chebyshev Type II')
-                    app.matchexactlyDropDown.Value='passband';
-                else
-                    app.matchexactlyDropDown.Value='stopband';
-                end
-
+                app.matchexactlyDropDown.Value='stopband';
             end
 
             app.generalRefreshFcn();
@@ -952,6 +954,7 @@ classdef interactiveFiltering < matlab.apps.AppBase
             xlabel(app.FilterAmplitudePlotAxis, 'f (Hz)')
             ylabel(app.FilterAmplitudePlotAxis, 'Amplitude (dB)')
             zlabel(app.FilterAmplitudePlotAxis, 'Z')
+            app.FilterAmplitudePlotAxis.Toolbar.Visible = 'off';
             app.FilterAmplitudePlotAxis.XLimitMethod = 'tight';
             app.FilterAmplitudePlotAxis.YLimitMethod = 'padded';
             app.FilterAmplitudePlotAxis.XGrid = 'on';
@@ -977,6 +980,7 @@ classdef interactiveFiltering < matlab.apps.AppBase
             xlabel(app.FilterPhaseDelayPlotAxis, 'f (Hz)')
             ylabel(app.FilterPhaseDelayPlotAxis, 'Phase delay (ms)')
             zlabel(app.FilterPhaseDelayPlotAxis, 'Z')
+            app.FilterPhaseDelayPlotAxis.Toolbar.Visible = 'off';
             app.FilterPhaseDelayPlotAxis.XLimitMethod = 'tight';
             app.FilterPhaseDelayPlotAxis.YLimitMethod = 'padded';
             app.FilterPhaseDelayPlotAxis.XGrid = 'on';
@@ -1002,6 +1006,7 @@ classdef interactiveFiltering < matlab.apps.AppBase
             xlabel(app.FilterGroupDelayPlotAxis, 'f (Hz)')
             ylabel(app.FilterGroupDelayPlotAxis, 'Group delay (ms)')
             zlabel(app.FilterGroupDelayPlotAxis, 'Z')
+            app.FilterGroupDelayPlotAxis.Toolbar.Visible = 'off';
             app.FilterGroupDelayPlotAxis.XLimitMethod = 'tight';
             app.FilterGroupDelayPlotAxis.YLimitMethod = 'padded';
             app.FilterGroupDelayPlotAxis.XGrid = 'on';
@@ -1021,7 +1026,6 @@ classdef interactiveFiltering < matlab.apps.AppBase
             % Create ResponseTypeButtonGroup
             app.ResponseTypeButtonGroup = uibuttongroup(app.GridLayout6);
             app.ResponseTypeButtonGroup.SelectionChangedFcn = createCallbackFcn(app, @ResponseTypeButtonGroupSelectionChanged, true);
-            app.ResponseTypeButtonGroup.BorderColor = [1 1 1];
             app.ResponseTypeButtonGroup.Title = 'Response Type';
             app.ResponseTypeButtonGroup.Layout.Row = [1 2];
             app.ResponseTypeButtonGroup.Layout.Column = 1;
@@ -1054,7 +1058,6 @@ classdef interactiveFiltering < matlab.apps.AppBase
 
             % Create DesignMethodButtonGroup
             app.DesignMethodButtonGroup = uibuttongroup(app.GridLayout6);
-            app.DesignMethodButtonGroup.BorderColor = [1 1 1];
             app.DesignMethodButtonGroup.Title = 'Design Method';
             app.DesignMethodButtonGroup.Layout.Row = 2;
             app.DesignMethodButtonGroup.Layout.Column = 1;
@@ -1425,6 +1428,7 @@ classdef interactiveFiltering < matlab.apps.AppBase
             title(app.timeDataPlotAxis, 'time plot of original and filtered data')
             xlabel(app.timeDataPlotAxis, 'time (s)')
             zlabel(app.timeDataPlotAxis, 'Z')
+            app.timeDataPlotAxis.Toolbar.Visible = 'off';
             app.timeDataPlotAxis.XLimitMethod = 'tight';
             app.timeDataPlotAxis.YLimitMethod = 'padded';
             app.timeDataPlotAxis.XGrid = 'on';
@@ -1450,6 +1454,7 @@ classdef interactiveFiltering < matlab.apps.AppBase
             xlabel(app.spectrumPlotAxis, 'f (Hz)')
             ylabel(app.spectrumPlotAxis, 'amplitude (dB)')
             zlabel(app.spectrumPlotAxis, 'Z')
+            app.spectrumPlotAxis.Toolbar.Visible = 'off';
             app.spectrumPlotAxis.XScale = 'log';
             app.spectrumPlotAxis.XMinorTick = 'on';
             app.spectrumPlotAxis.XGrid = 'on';

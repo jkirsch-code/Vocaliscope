@@ -251,7 +251,7 @@ decimalDropDown.Tag = 'tabularImport.decimal';
 % and a third row of controls would be a lot more height than the question is
 % worth.
 %
-% 'keep' is NOT offered here, though FILLBLANKS still supports it and
+% 'keep' and 'drop' is NOT offered here, though FILLBLANKS still supports it and
 % 'Blanks','keep' still works for a caller who asks for it in code. It is off the
 % menu because it is the one method that hands back a matrix with holes in it,
 % and a hole in the data is not something a recording should arrive with: every
@@ -261,9 +261,9 @@ decimalDropDown.Tag = 'tabularImport.decimal';
 %
 % 'linear' is first and is the default, as the one that invents nothing: it puts
 % a straight line between the two measured values on either side of the gap.
-blanksItems = {'linear', 'drop', 'previous', 'next', 'nearest', ...
+blanksItems = {'linear', 'previous', 'next', 'nearest', ...
     'spline', 'pchip', 'makima'};
-blanksLabels = {'linear', 'drop the row', 'previous', 'next', 'nearest', ...
+blanksLabels = {'linear', 'previous', 'next', 'nearest', ...
     'spline', 'pchip', 'makima'};
 uilabel(controls, 'Text', 'Blanks:', 'HorizontalAlignment', 'right');
 blanksDropDown = uidropdown(controls, ...

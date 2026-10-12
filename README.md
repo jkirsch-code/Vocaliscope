@@ -18,6 +18,7 @@ The software consolidates functionality typically distributed across multiple to
 ### Data Import & Export
 
 - **Audio formats:** `.wav`, `.mp3`, `.flac`, `.ogg`, `.opus`, `.m4a`, `.mp4`, `.aifc`, `.aiff`, `.aif`, `.au`
+- **Text/spreadsheet formats:** `.txt`, `.csv`, `.xlsx`, `.xls`, `.xlsm`, `.xlsb`
 - **Glottal area waveforms:** `.gaw` (Glottis Analysis Tools format [25])
 - **Phonovibrogram images:** `.png`, `.bmp`, `.jpg`, `.jpeg`, `.jp2`
 - **Photron high-speed camera:** `.wvd`, `.csv` (Type-A) [13]
@@ -196,9 +197,9 @@ Features: pitch contour + vibrato markers preview, speed/extent plots, method de
 <summary><b>Onset Analysis</b></summary>
 
 Four methods available:
-- **VRT** — Voice Reaction Time, energy VAD based (original implementation)
-- **POT-Mergell** — Perceptual Onset Time (original implementation)
-- **POT-Petermann** — Perceptual Onset Time (original implementation)
+- **VRT** — Vocal Rise Time, energy VAD based (original implementation)
+- **POT-Mergell** — Phonation Onset Time (original implementation)
+- **POT-Petermann** — Phonation Onset Time (original implementation)
 - **VAT** — Voice Attack Time, dEGG-based with EGG+audio (original implementation)
 
 Features: waveform + onset marker preview, intermediate results display, multi-channel comparison, CSV export, persistent settings.
@@ -216,13 +217,13 @@ Features: waveform + onset marker preview, intermediate results display, multi-c
 
 ## Voice Parameters
 
-Vocaliscope computes approximately **65 active voice parameters** across multiple categories, organized in a tree structure. Parameters are computed from user-defined segments and exported to `.xlsx`.
+Vocaliscope computes approximately **65 active voice parameters** across multiple categories, organized in a tree structure. Parameters are computed from user-defined segments and exported to `.xlsx`. The parameter set largely follows the Glottis Analysis Tool (GAT) [25]; the source of each formula is cited in the corresponding category below.
 
 <details>
 <summary><b>Fundamental Frequency Measures</b></summary>
 
 - Fundamental Frequency (Hz)
-- Cycle Duration (ms)
+- Cycle Duration (s)
 - Maximum Harmonic (Hz)
 - Minimum Subharmonic (Hz)
 </details>
@@ -230,132 +231,131 @@ Vocaliscope computes approximately **65 active voice parameters** across multipl
 <details>
 <summary><b>Amplitude Perturbation Measures</b></summary>
 
-- Mean Shimmer (dB)
-- Shimmer (%)
-- Amplitude Perturbation Quotient (APQ)
-- Amplitude Perturbation Factor (APF)
-- Amplitude Variability Index (AVI)
+- Mean Shimmer (dB) [36] [37] [42]
+- Shimmer (%) [37] [38]
+- Amplitude Perturbation Quotient (APQ) [39] [40] [41]
+- Amplitude Perturbation Factor (APF) [39] [40] [41]
+- Amplitude Variability Index (AVI) [46]
 </details>
 
 <details>
 <summary><b>Period Perturbation Measures</b></summary>
 
-- Mean Jitter (ms)
-- Jitter (%)
-- Jitter Ratio
-- Jitter Factor
-- Period Perturbation Quotient (PPQ)
-- Period Perturbation Factor (PPF)
-- Relative Average Perturbation V1 (RAP)
-- Relative Average Perturbation V2 (RAP)
-- Period Variability Index (PVI)
+- Mean Jitter (s) [36] [40]
+- Jitter (%) [36] [43]
+- Jitter Ratio [43]
+- Jitter Factor [44]
+- Period Perturbation Quotient (PPQ) [37] [38] [39] [40] [41]
+- Period Perturbation Factor (PPF) [39] [40] [41]
+- Relative Average Perturbation V1 (RAP) [40] [41] [45]
+- Relative Average Perturbation V2 (RAP) [40] [41] [45]
+- Period Variability Index (PVI) [38] [40]
 </details>
 
 <details>
 <summary><b>Energy Perturbation Measures</b></summary>
 
-- Energy Perturbation Quotient (EPQ)
-- Energy Perturbation Factor (EPF)
+- Energy Perturbation Quotient (EPQ) [39] [40] [41]
+- Energy Perturbation Factor (EPF) [39] [40] [41]
 </details>
 
 <details>
 <summary><b>Noise Measures</b></summary>
 
-- Spectral Flatness
-- Glottal-to-Noise Excitation Ratio (GNE) v1
+- Spectral Flatness [47] [61]
 - Cepstral Peak Prominence I (CPP)
 </details>
 
 <details>
 <summary><b>Glottal Area Measures</b></summary>
 
-- Open Quotient (OQ)
-- Closing Quotient (ClQ)
-- Speed Quotient (SQ)
-- Speed Index (SI)
-- Rate Quotient
-- Asymmetry Quotient
-- Glottis Gap Index (GGI)
-- Plateau Quotient
-- Glottal Area Index (GAI)
+- Open Quotient (OQ) [36] [49]
+- Closing Quotient (ClQ) [50]
+- Speed Quotient (SQ) [36]
+- Speed Index (SI) [36]
+- Rate Quotient [36]
+- Asymmetry Quotient [51]
+- Glottis Gap Index (GGI) [52] [53]
+- Plateau Quotient [54]
+- Glottal Area Index (GAI) [55]
 </details>
 
 <details>
 <summary><b>Glottal Area Periodicity Measures</b></summary>
 
-- Amplitude-Periodicity
-- Time-Periodicity
+- Amplitude-Periodicity [56]
+- Time-Periodicity [56]
 </details>
 
 <details>
 <summary><b>Glottal Area Derivative Measures</b></summary>
 
-- Maximum Area Declination Rate (MADR)
-- Amplitude Quotient
+- Maximum Area Declination Rate (MADR) [50] [57] [58] [59]
+- Amplitude Quotient [57] [59]
 </details>
 
 <details>
 <summary><b>Basic Measurements</b></summary>
 
-- Sum
-- Mean (arithmetic, harmonic, geometric)
-- Standard Deviation (STD)
-- Median
-- Inter-Quartile Range (IQR)
-- Minimum / Maximum
-- Root Mean Square (RMS)
-- Mode
-- Quantiles (5%–95% in 5% steps)
-- Skewness
-- Kurtosis
-- Sum of Square Values
+- Sum [69]
+- Mean (arithmetic, harmonic, geometric) [69]
+- Standard Deviation (STD) [69]
+- Median [69]
+- Inter-Quartile Range (IQR) [69]
+- Minimum / Maximum [69]
+- Root Mean Square (RMS) [69]
+- Mode [69]
+- Quantiles (5%–95% in 5% steps) [69]
+- Skewness [68]
+- Kurtosis [68]
+- Sum of Square Values [69]
 </details>
 
 <details>
 <summary><b>Additional Spectral Descriptors</b></summary>
 
-- Spectral Crest
-- Spectral Flux
-- Spectral Spread
-- Spectral Skewness (Spectral Tilt)
-- Spectral Kurtosis
-- Spectral Centroid
-- Spectral Entropy
-- Spectral Slope
-- Spectral Decrease
-- Spectral Rolloff Point
-- Harmonic Ratio
-- Harmonic-to-Noise Ratio (HNR) via cross-correlation
-- Signal-to-Noise Ratio (SNR, dB carrier)
+- Spectral Crest [60]
+- Spectral Flux [60]
+- Spectral Spread [60]
+- Spectral Skewness (Spectral Tilt) [60]
+- Spectral Kurtosis [60]
+- Spectral Centroid [60]
+- Spectral Entropy [60]
+- Spectral Slope [60]
+- Spectral Decrease [60]
+- Spectral Rolloff Point [60]
+- Harmonic Ratio [60]
+- Harmonic-to-Noise Ratio (HNR) via cross-correlation [48]
+- Signal-to-Noise Ratio (SNR, dB carrier) [62]
 </details>
 
 <details>
 <summary><b>Psychoacoustic Measures</b></summary>
 
-- Acoustic Loudness (Zwicker, ISO 532-1)
-- Acoustic Fluctuation
-- Acoustic Sharpness
-- Acoustic Roughness
+- Acoustic Loudness (ISO 532-1 stationary loudness) [64]
+- Acoustic Fluctuation [66]
+- Acoustic Sharpness (DIN 45692) [65]
+- Acoustic Roughness [67]
 </details>
 
 <details>
 <summary><b>Others</b></summary>
 
-- Zero Crossing Rate
-- Sample Entropy (time domain)
-- Cycle-based Spectral Sample Entropy
-- Sound Pressure Level (SPL: dB(A), dB(C), dB(Z))
-- RAP for cycle energy
-- RAP for cycle range
-- Energy Variability Index (EVI)
-- Glottal-to-Noise Excitation Ratio (GNE) v2
+- Zero Crossing Rate [60]
+- Sample Entropy (time domain) [23]
+- Cycle-based Spectral Sample Entropy [23]
+- Sound Pressure Level (SPL: dB(A), dB(C), dB(Z)) [63]
+- RAP for cycle energy [40] [41] [45]
+- RAP for cycle range [40] [41] [45]
+- Energy Variability Index (EVI) [46]
+- Glottal-to-Noise Excitation Ratio (GNE) v2 [22]
 - Cepstral Peak Prominence Smoothed v3 (CPP(s))
 </details>
 
 <details>
 <summary><b>Planned Parameters</b> (not yet available)</summary>
 
-The following parameter categories are implemented in the code but currently hidden or planned for future release:
+The following parameters are planned for a future release and are not yet available:
 
 **Mechanical Measures:**
 - Stiffness (1/s)
@@ -375,6 +375,7 @@ The following parameter categories are implemented in the code but currently hid
 - Amplitude Symmetry
 
 **Additional Noise Measures:**
+- Glottal-to-Noise Excitation Ratio (GNE) v1
 - Harmonics Intensity
 - Harmonics-to-Noise Ratio (dB) (original implementation)
 - Normalized Noise Energy (NNE)
@@ -550,6 +551,40 @@ The following tools are related to Vocaliscope's domain but their code is not in
 | [33] | Zalazar, A.L. et al. — MCLP: Maximum Correntropy Linear Prediction | [Izalazar/MCLP](https://github.com/Izalazar/MCLP) · *IEEE/ACM TASLP*, 33, 152–162 (2025). DOI: [10.1109/TASLP.2024.3512187](https://doi.org/10.1109/TASLP.2024.3512187) |
 | [34] | Kearney, K. — subdir: Recursive directory listing utility | [File Exchange #15859](https://www.mathworks.com/matlabcentral/fileexchange/15859-subdir-a-recursive-file-search) · [kakearney/subdir-pkg](https://github.com/kakearney/subdir-pkg) |
 | [35] | Degottex, G., Kane, J., Drugman, T., Raitio, T. & Scherer, S. — COVAREP: A collaborative voice analysis repository for speech technologies | [covarep/covarep](https://github.com/covarep/covarep) · *Proc. ICASSP*, 960–964 (2014). DOI: [10.1109/ICASSP.2014.6853739](https://doi.org/10.1109/ICASSP.2014.6853739) |
+| [36] | Baken, R.J. & Orlikoff, R.F. — Clinical Measurement of Speech and Voice (2nd ed.) | [Open Library](https://openlibrary.org/books/OL16972708M/Clinical_measurement_of_speech_and_voice) (ISBN 978-1-56593-869-4) · Baken & Orlikoff, Cengage Learning (1999) |
+| [37] | Bielamowicz, S., Kreiman, J., Gerratt, B.R., Dauer, M.K. & Berke, G.S. — Comparison of voice analysis systems for perturbation measurement | Bielamowicz et al., *J. Speech Lang. Hear. Res.*, 39(1), 126–134 (1996). DOI: [10.1044/jshr.3901.126](https://doi.org/10.1044/jshr.3901.126) |
+| [38] | Titze, I.R., Horii, Y. & Scherer, S.R. — Some technical considerations in voice perturbation measurements | Titze, Horii & Scherer, *J. Speech Lang. Hear. Res.*, 30(2), 252–260 (1987). DOI: [10.1044/jshr.3002.252](https://doi.org/10.1044/jshr.3002.252) |
+| [39] | Kasuya, H., Endo, Y. & Saliu, S. — Novel acoustic measurements of jitter and shimmer characteristics from pathological voice | Kasuya, Endo & Saliu, *Proc. EUROSPEECH'93*, 1973–1976 (1993). DOI: [10.21437/eurospeech.1993-446](https://doi.org/10.21437/eurospeech.1993-446) |
+| [40] | Lessing, J. — Entwicklung einer Klassifikationsmethode zur akustischen Analyse fortlaufender Sprache unterschiedlicher Stimmgüte mittels Neuronaler Netze und deren Anwendung [PhD thesis] | Lessing, PhD thesis, Georg-August-Universität Göttingen (2007). DOI: [10.53846/goediss-2873](https://doi.org/10.53846/goediss-2873) |
+| [41] | Michaelis, D. — Das Göttinger Heiserheits-Diagramm: Entwicklung und Prüfung eines akustischen Verfahrens zur objektiven Stimmgütebeurteilung pathologischer Stimmen [PhD thesis] | Michaelis, PhD thesis, Georg-August-Universität Göttingen (2000). DOI: [10.53846/goediss-4239](https://doi.org/10.53846/goediss-4239) |
+| [42] | Horii, Y. — Vocal shimmer in sustained phonation | Horii, *J. Speech Lang. Hear. Res.*, 23(1), 202–209 (1980). DOI: [10.1044/jshr.2301.202](https://doi.org/10.1044/jshr.2301.202) |
+| [43] | Horii, Y. — Fundamental frequency perturbation observed in sustained phonation | Horii, *J. Speech Lang. Hear. Res.*, 22(1), 5–19 (1979). DOI: [10.1044/jshr.2201.05](https://doi.org/10.1044/jshr.2201.05) |
+| [44] | Hollien, H., Michel, J. & Doherty, E.T. — A method for analyzing vocal jitter in sustained phonation | Hollien, Michel & Doherty, *J. Phonetics*, 1(1), 85–91 (1973). DOI: [10.1016/S0095-4470(19)31377-4](https://doi.org/10.1016/S0095-4470(19)31377-4) |
+| [45] | Koike, Y. — Application of some acoustic measures for the evaluation of laryngeal dysfunction | Koike, *Studia Phonologica*, 7, 17–23 (1973) |
+| [46] | Deal, R.E. & Emanuel, F.W. — Some waveform and spectral features of vowel roughness | Deal & Emanuel, *J. Speech Hear. Res.*, 21(2), 250–264 (1978). DOI: [10.1044/jshr.2102.250](https://doi.org/10.1044/jshr.2102.250) |
+| [47] | Johnston, J.D. — Transform coding of audio signals using perceptual noise criteria | Johnston, *IEEE J. Select. Areas Commun.*, 6(2), 314–323 (1988). DOI: [10.1109/49.608](https://doi.org/10.1109/49.608) |
+| [48] | Yumoto, E., Gould, W.J. & Baer, T. — Harmonics-to-noise ratio as an index of the degree of hoarseness | Yumoto, Gould & Baer, *J. Acoust. Soc. Am.*, 71(6), 1544–1550 (1982). DOI: [10.1121/1.387808](https://doi.org/10.1121/1.387808) |
+| [49] | Timcke, R., von Leden, H. & Moore, P. — Laryngeal vibrations: Measurements of the glottic wave. Part I. The normal vibratory cycle | Timcke, von Leden & Moore, *Arch. Otolaryngol.*, 68(1), 1–19 (1958). DOI: [10.1001/archotol.1958.00730020005001](https://doi.org/10.1001/archotol.1958.00730020005001) |
+| [50] | Holmberg, E.B., Hillman, R.E. & Perkell, J.S. — Glottal airflow and transglottal air pressure measurements for male and female speakers in soft, normal, and loud voice | Holmberg, Hillman & Perkell, *J. Acoust. Soc. Am.*, 84(2), 511–529 (1988). DOI: [10.1121/1.396829](https://doi.org/10.1121/1.396829) |
+| [51] | Henrich, N., Sundin, G., Ambroise, D., d'Alessandro, C., Castellengo, M. & Doval, B. — Just noticeable differences of open quotient and asymmetry coefficient in singing voice | Henrich et al., *J. Voice*, 17(4), 481–494 (2003). DOI: [10.1067/S0892-1997(03)00005-5](https://doi.org/10.1067/S0892-1997(03)00005-5) |
+| [52] | Patel, R., Dubrovskiy, D. & Döllinger, M. — Characterizing vibratory kinematics in children and adults with high-speed digital imaging | Patel, Dubrovskiy & Döllinger, *J. Speech Lang. Hear. Res.*, 57(2) (2014). DOI: [10.1044/2014_JSLHR-S-12-0278](https://doi.org/10.1044/2014_JSLHR-S-12-0278) |
+| [53] | Kunduk, M., Döllinger, M., McWhorter, A.J. & Lohscheller, J. — Assessment of the variability of vocal fold dynamics within and between recordings with high-speed imaging and by phonovibrogram | Kunduk et al., *Laryngoscope*, 120(5), 981–987 (2010). DOI: [10.1002/lary.20832](https://doi.org/10.1002/lary.20832) |
+| [54] | Mehta, D.D., Zañartu, M., Quatieri, T.F., Deliyski, D.D. & Hillman, R.E. — Investigating acoustic correlates of human vocal fold vibratory phase asymmetry through modeling and laryngeal high-speed videoendoscopy | Mehta et al., *J. Acoust. Soc. Am.*, 130(6), 3999–4009 (2011). DOI: [10.1121/1.3658441](https://doi.org/10.1121/1.3658441) |
+| [55] | Chen, G., Kreiman, J., Gerratt, B.R., Neubauer, R.T., Shue, H. & Alwan, A. — Development of a glottal area index that integrates glottal gap size and open quotient | Chen et al., *J. Acoust. Soc. Am.*, 133(3), 1656–1666 (2013). DOI: [10.1121/1.4789931](https://doi.org/10.1121/1.4789931) |
+| [56] | Qiu, Q., Schutte, H.K., Gu, L. & Yu, Q. — An automatic method to quantify the vibration properties of human vocal folds via videokymography | Qiu et al., *Folia Phoniatr. Logop.*, 55(3), 128–136 (2003). DOI: [10.1159/000070724](https://doi.org/10.1159/000070724) |
+| [57] | Alku, P., Airas, M., Björkner, E. & Sundberg, J. — An amplitude quotient based method to analyze changes in the shape of the glottal pulse in the regulation of vocal intensity | Alku et al., *J. Acoust. Soc. Am.*, 120(2), 1052–1062 (2006). DOI: [10.1121/1.2211589](https://doi.org/10.1121/1.2211589) |
+| [58] | Titze, I.R. — Theoretical analysis of maximum flow declination rate versus maximum area declination rate in phonation | Titze, *J. Speech Lang. Hear. Res.*, 49(2), 439–447 (2006). DOI: [10.1044/1092-4388(2006/034)](https://doi.org/10.1044/1092-4388(2006/034)) |
+| [59] | Patel, R., Dubrovskiy, D. & Döllinger, M. — Measurement of glottal cycle characteristics between children and adults: Physiological variations | Patel, Dubrovskiy & Döllinger, *J. Voice*, 28(4), 476–486 (2014). DOI: [10.1016/j.jvoice.2013.12.010](https://doi.org/10.1016/j.jvoice.2013.12.010) |
+| [60] | MathWorks — `audioFeatureExtractor`: Audio feature extraction | [MATLAB docs](https://www.mathworks.com/help/audio/ref/audiofeatureextractor.html) (Audio Toolbox) |
+| [61] | MathWorks — `spectralFlatness`: Spectral flatness for signals and spectrograms | [MATLAB docs](https://www.mathworks.com/help/signal/ref/spectralflatness.html) (Signal Processing Toolbox) |
+| [62] | MathWorks — `snr`: Signal-to-noise ratio | [MATLAB docs](https://www.mathworks.com/help/signal/ref/snr.html) (Signal Processing Toolbox) |
+| [63] | MathWorks — `splMeter`: Sound pressure level meter | [MATLAB docs](https://www.mathworks.com/help/audio/ref/splmeter.html) (Audio Toolbox) |
+| [64] | MathWorks — `acousticLoudness`: Permanent and short-term loudness | [MATLAB docs](https://www.mathworks.com/help/audio/ref/acousticloudness.html) (Audio Toolbox; ISO 532-1 stationary loudness) |
+| [65] | MathWorks — `acousticSharpness`: Sharpness sensation of a sound | [MATLAB docs](https://www.mathworks.com/help/audio/ref/acousticsharpness.html) (Audio Toolbox; DIN 45692, Aures and von Bismarck models) |
+| [66] | MathWorks — `acousticFluctuation`: Fluctuation strength | [MATLAB docs](https://www.mathworks.com/help/audio/ref/acousticfluctuation.html) (Audio Toolbox) |
+| [67] | MathWorks — `acousticRoughness`: Roughness sensation of a sound | [MATLAB docs](https://www.mathworks.com/help/audio/ref/acousticroughness.html) (Audio Toolbox) |
+| [68] | MathWorks — `skewness` and `kurtosis`: Sample skewness and kurtosis | [skewness](https://www.mathworks.com/help/stats/ref/skewness.html) · [kurtosis](https://www.mathworks.com/help/stats/ref/kurtosis.html) (Statistics and Machine Learning Toolbox) |
+| [69] | MathWorks — Descriptive statistics: sum, mean, median, std, var, min, max, mode, rms, iqr, quantile | [mean](https://www.mathworks.com/help/matlab/ref/mean.html) · [std](https://www.mathworks.com/help/matlab/ref/std.html) · [mode](https://www.mathworks.com/help/matlab/ref/mode.html) · [quantile](https://www.mathworks.com/help/matlab/ref/quantile.html) (MATLAB) |
 
 ---
 
@@ -562,7 +597,7 @@ If you use Vocaliscope in your research, please cite:
   author       = {Kirsch, Jonas},
   title        = {Vocaliscope: An open-source app for multi-channel voice research},
   year         = {2026},
-  version      = {5.0},
+  version      = {5.1},
   url          = {https://github.com/jkirsch-code/Vocaliscope},
   license      = {GPL-3.0-or-later}
 }
@@ -572,11 +607,11 @@ See [`CITATION.cff`](CITATION.cff) for machine-readable citation metadata.
 
 ### Studies using Vocaliscope
 
-- Kirsch, J., Köberlein, M., Döllinger, M., and Echternach, M. (2026). Influence of Execution Speed of an Ascending Glissando on Vocal Stability of Vocally Untrained and Professionally Trained Subjects. *Journal of Voice.* https://doi.org/10.1016/j.jvoice.2026.04.019
+- Hoppermann, R., Kirsch, J., Pilsl, T., Köberlein, M., Döllinger, M., Echternach, M., 2026. Influence of a Whisper Loading Test on the Vibration Mechanism of the Vocal Folds in the Context of Organic Dysphonia. JCM 15, 1735. https://doi.org/10.3390/jcm15051735
+- Kainz, M.-A., Hoppermann, R., Pilsl, T., Köberlein, M., Kirsch, J., Döllinger, M., Echternach, M., 2026. Effects of Bubbles During Water Resistance Therapy on the Vibration Characteristics of Vocal Folds During the Phonation of Different Vowels. JCM 15, 669. https://doi.org/10.3390/jcm15020669
+- Kirsch, J., Köberlein, M., Döllinger, M., Echternach, M., 2026. Influence of Execution Speed of an Ascending Glissando on Vocal Stability of Vocally Untrained and Professionally Trained Subjects. Journal of Voice S089219972600189X. https://doi.org/10.1016/j.jvoice.2026.04.019
+- Köberlein, M., Pilsl, T., Thiele, J., Gantner, I., Gellrich, D., Gantner, S., Kirsch, J., Echternach, M., 2026. Does Water Resistance Therapy Influence Vocal Vibrato In Classically Trained Singers? Journal of Voice. https://doi.org/10.1016/j.jvoice.2026.08.024
 
-- Hoppermann, R., Kirsch, J., Pilsl, T., Köberlein, M., Döllinger, M., and Echternach, M. (2026). Influence of a Whisper Loading Test on the Vibration Mechanism of the Vocal Folds in the Context of Organic Dysphonia. *JCM*, 15(5), 1735. https://doi.org/10.3390/jcm15051735
-
-- Kainz, M.-A., Hoppermann, R., Pilsl, T., Köberlein, M., Kirsch, J., Döllinger, M., and Echternach, M. (2026). Effects of Bubbles During Water Resistance Therapy on the Vibration Characteristics of Vocal Folds During the Phonation of Different Vowels. *JCM*, 15(2). https://doi.org/10.3390/jcm15020669
 
 ---
 
@@ -591,3 +626,44 @@ This project is licensed under the [GNU General Public License v3.0](LICENSE) **
 **Jonas Kirsch** — jonas.kirsch@med.uni-muenchen.de
 
 Division of Phoniatrics and Pediatric Audiology, Department of Otorhinolaryngology, LMU University Hospital, LMU Munich, Germany
+
+
+<script>
+  // Automatically expand all collapsible boxes when the page loads or before printing
+  function expandAllBoxes() {
+    // 1. Expand native HTML <details>
+    document.querySelectorAll('details').forEach(el => el.setAttribute('open', ''));
+    
+    // 2. Expand Bootstrap/theme collapsible containers if present
+    document.querySelectorAll('.collapse, .collapsible, [data-toggle="collapse"]').forEach(el => {
+      el.classList.add('show', 'in');
+      el.style.display = 'block';
+    });
+  }
+
+  window.addEventListener('DOMContentLoaded', expandAllBoxes);
+  window.addEventListener('beforeprint', expandAllBoxes);
+  // Run immediately in case DOM is already parsed
+  expandAllBoxes();
+</script>
+
+<style>
+  /* Force expanded view on screen and in print */
+  details[open] > *:not(summary),
+  details > *:not(summary) {
+    display: block !important;
+  }
+
+  /* Force all scrollable containers and code to unclip */
+  pre, code, .hljs, div[class*="content"], div[class*="box"], div[class*="card"] {
+    max-height: none !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  @media print {
+    details {
+      display: block !important;
+    }
+  }
+</style>

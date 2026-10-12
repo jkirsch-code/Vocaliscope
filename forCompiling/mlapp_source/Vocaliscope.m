@@ -218,12 +218,6 @@ classdef Vocaliscope < matlab.apps.AppBase
         % 
         % end
 
-        function createPoolIfNonexistent()
-            if isempty(gcp("nocreate"))
-                parpool("Processes",[1 min(4,feature('numcores'))],"IdleTimeout",12*60);
-            end
-        end
-
         function HNR_dB = computeHNRbiasedXcorr(x)
             % x : input signal (single window)
 
@@ -442,7 +436,11 @@ classdef Vocaliscope < matlab.apps.AppBase
 
         end
 
-        function refreshTimeAndSpectralPlotData(app)
+        function refreshTimeAndSpectralPlotData(app,channelsToRefresh)
+            if nargin<2
+                channelsToRefresh=1:size(app.availableChannelsTable.Data,1);
+            end
+
             if ~isdeployed && app.doProfiling
                 %#exclude profile
                 profile on;
@@ -465,18 +463,20 @@ classdef Vocaliscope < matlab.apps.AppBase
 
             app.executeXLimListener=0;
 
-            delete(app.channelAxes);
-            delete(app.channelAxesSpectral);
+            if numel(app.channelAxes)>=max(channelsToRefresh);
+            delete(app.channelAxes(channelsToRefresh));
+            delete(app.channelAxesSpectral(channelsToRefresh));
+            end
 
-            app.timePlotHandles=gobjects(1,nChannels);
-            app.spectralPlotHandles=gobjects(1,nChannels);
+            app.timePlotHandles(channelsToRefresh)=gobjects(1,numel(channelsToRefresh));
+            app.spectralPlotHandles(channelsToRefresh)=gobjects(1,numel(channelsToRefresh));
 
-            app.cycleBorderHandles=gobjects(1,nChannels);
-            app.cycleOQHandle=gobjects(1,nChannels);
-            app.cycleClQHandle=gobjects(1,nChannels);
+            app.cycleBorderHandles(channelsToRefresh)=gobjects(1,numel(channelsToRefresh));
+            app.cycleOQHandle(channelsToRefresh)=gobjects(1,numel(channelsToRefresh));
+            app.cycleClQHandle(channelsToRefresh)=gobjects(1,numel(channelsToRefresh));
 
-            app.channelAxes=gobjects(1,nChannels);
-            app.channelAxesSpectral=gobjects(1,nChannels);
+            app.channelAxes(channelsToRefresh)=gobjects(1,numel(channelsToRefresh));
+            app.channelAxesSpectral(channelsToRefresh)=gobjects(1,numel(channelsToRefresh));
 
             if isempty(app.availableChannelsTable.Selection)
                 return;
@@ -493,11 +493,11 @@ classdef Vocaliscope < matlab.apps.AppBase
             %channelNr=1;
 
 
-            for channelNr=1:nChannels
+            for channelNr=channelsToRefresh
 
                 %% create plot line and set labels
-                currAxTime=nexttile(app.tlTime);
-                currAxSpectral=nexttile(app.tlSpectral);
+                currAxTime=nexttile(app.tlTime,channelNr);
+                currAxSpectral=nexttile(app.tlSpectral,channelNr);
 
 
 
@@ -522,9 +522,9 @@ classdef Vocaliscope < matlab.apps.AppBase
             end
 
 
-            app.refreshSpectralPlots(1:nChannels);
+            app.refreshSpectralPlots(channelsToRefresh);
 
-            for channelNr=1:nChannels
+            for channelNr=channelsToRefresh
 
                 currAxTime=app.channelAxes(channelNr);
                 currAxSpectral=app.channelAxesSpectral(channelNr);
@@ -755,9 +755,13 @@ classdef Vocaliscope < matlab.apps.AppBase
                             clqvis='on';
                         end
 
-                        %channelNr=find(app.availableChannelsTable.Selection==channelNr,1);
-                        app.cycleOQHandle(channelNr)=app.addManyPatchesAsSinglePatch(channelNr,app.calculationResults.channelResults(channelNr).allOQBorders,[0.2 0 0],[],oqvis);
-                        app.cycleClQHandle(channelNr)=app.addManyPatchesAsSinglePatch(channelNr,app.calculationResults.channelResults(channelNr).allClQBorders,[0 0.2 0],[],clqvis);
+                        if isfield(app.calculationResults.channelResults(channelNr),'allOQBordersRel') && app.calculationSettings.cycleDuration.showRelativeGAWphaseThresholds
+                            app.cycleOQHandle(channelNr)=app.addManyPatchesAsSinglePatch(channelNr,app.calculationResults.channelResults(channelNr).allOQBordersRel,[0.2 0 0],[],oqvis);
+                            app.cycleClQHandle(channelNr)=app.addManyPatchesAsSinglePatch(channelNr,app.calculationResults.channelResults(channelNr).allClQBordersRel,[0 0.2 0],[],clqvis);
+                        else
+                            app.cycleOQHandle(channelNr)=app.addManyPatchesAsSinglePatch(channelNr,app.calculationResults.channelResults(channelNr).allOQBorders,[0.2 0 0],[],oqvis);
+                            app.cycleClQHandle(channelNr)=app.addManyPatchesAsSinglePatch(channelNr,app.calculationResults.channelResults(channelNr).allClQBorders,[0 0.2 0],[],clqvis);
+                        end
 
                         uistack(app.cycleOQHandle(channelNr),'bottom');
                         %end
@@ -1015,8 +1019,7 @@ classdef Vocaliscope < matlab.apps.AppBase
 
                 set(app.PlaySoundButton,'Text','Play Sound');
 
-                ax.CurrentPoint
-                app.UIFigure.CurrentPoint
+                
 
                 % Store drag state
                 data = app.DraggingData;
@@ -2040,7 +2043,7 @@ classdef Vocaliscope < matlab.apps.AppBase
             parameterNames=fieldnames(app.calculationResults.channelResults);
 
             parameterNames(contains(parameterNames,{'curr'},"IgnoreCase",true))=[];
-            parameterNames(ismember(parameterNames,{'cycleBorderVals' 'cycleDurations' 'allOQBorders' 'allClQBorders'}))=[];
+            parameterNames(ismember(parameterNames,{'cycleBorderVals' 'cycleDurations' 'allOQBorders' 'allClQBorders' 'allOQBordersRel' 'allClQBordersRel'}))=[];
             parameterNames(contains(parameterNames,'_Unit'))=[];
 
 
@@ -2076,8 +2079,12 @@ classdef Vocaliscope < matlab.apps.AppBase
                 currnames=channelShortNames(channelsInWhichTheParameterExists);
                 currparams=repelem(parameterNames(parameterNr),sum(channelsInWhichTheParameterExists),1);
                 currsources=app.channelSource(channelsInWhichTheParameterExists)';
-                currparamunits=cellstr(vertcat(app.calculationResults.channelResults.([parameterNames{parameterNr} '_Unit'])));
-
+                
+                try % sometimes i forget to add the Unit
+                    currparamunits=cellstr(vertcat(app.calculationResults.channelResults.([parameterNames{parameterNr} '_Unit'])));
+                catch
+                    currparamunits=repmat({'notFound'},[numel(currsources) 1]);
+                end
                 currnames=currnames(:);
                 currparams=currparams(:);
                 currsources=currsources(:);
@@ -5268,11 +5275,35 @@ classdef Vocaliscope < matlab.apps.AppBase
                 app.channelNames(selection)=[];
                 app.updateSelectionAreaEditFieldsLimits();
 
+                % update the number of maximum visible channels, with a
+                % hard cap at 8
+                if numel(app.channelAxes)==0
+                    app.showngraphswithoutscrollingDropDown.Enable='off';
+                else
+                    valueBefore=app.showngraphswithoutscrollingDropDown.Value;
+                    app.showngraphswithoutscrollingDropDown.Items=strsplit(num2str(1:min([numel(app.channelAxes) 8])));
+                    
+                    if ismember(valueBefore,app.showngraphswithoutscrollingDropDown.Items)
+                        app.showngraphswithoutscrollingDropDown.Value=valueBefore;
+                    else
+                        app.showngraphswithoutscrollingDropDown.Value=app.showngraphswithoutscrollingDropDown.Items{end};
+                    end
+                end
 
                 app.availableChannelsTable.Selection=1:numel(app.channelAxes);
                 app.refreshTimeAndSpectralPlotDataVisibility();
 
                 app.refreshAppliedLagTexts();
+
+                % to make sure that the first tile has nr1 and goes through
+                % until tile N with N channels
+                for channelNr=1:numel(app.channelAxes)
+                    app.channelAxes(channelNr).Layout.Tile=channelNr;
+                    app.channelAxesSpectral(channelNr).Layout.Tile=channelNr;
+                end
+
+                
+                
             end
 
         end
@@ -12688,7 +12719,7 @@ classdef Vocaliscope < matlab.apps.AppBase
             % ---------- process based parfor (no app inside) ----------
             %app.createPoolIfNonexistent();
 
-            % wante dto use parfor but with combination of debounce timer in the
+            % wanted to use parfor but with combination of debounce timer in the
             % marking dragging function, it is handing somewhere -> to normal for
             % for now
             for channelNr=givenChannelNrs
@@ -13151,8 +13182,6 @@ classdef Vocaliscope < matlab.apps.AppBase
                 moveInTimeOnly=0;
             end
 
-            app.createPoolIfNonexistent();
-
             timeCells=app.channelXValues;
             yCells=app.channelYValues;
             FSs=app.channelSampleRates;
@@ -13171,6 +13200,8 @@ classdef Vocaliscope < matlab.apps.AppBase
                 fCell    = cell(numel(channelsToRefresh),1);
                 tCell    = cell(numel(channelsToRefresh),1);
                 isBatch= app.batchMode;
+
+                app.createPoolIfNonexistent();
 
                 parfor channelNr=channelsToRefresh
                     time=timeCells{channelNr};
@@ -13244,7 +13275,7 @@ classdef Vocaliscope < matlab.apps.AppBase
                     fData     = fCell{channelNr};
                     resampledTimeNew = tCell{channelNr};
 
-                    if ~validHandles(channelNr)
+                    if channelNr>numel(spectrumHandles) || ~validHandles(channelNr)
                         spectrumHandles(channelNr)=imagesc(spectralAxes(channelNr),resampledTimeNew,fData,wtAbs,'PickableParts','none');
                     else
                         set(spectrumHandles(channelNr),'CData',wtAbs,'YData',fData,'XData',resampledTimeNew);
@@ -13349,8 +13380,9 @@ classdef Vocaliscope < matlab.apps.AppBase
              persistent lastPath;
 
              app.titleTimer.stop();
-                listOfFormatsForAudioread=';*.aifc;*.aiff;*.aif;*.au;*.flac;*.ogg;*.opus;*.wav;*.mp3;*.m4a;*.mp4';
-                listOfFormatsForImageread=';*.png;*.bmp;*.jpg;*.jpeg;*.jp2';
+             listOfFormatsForAudioread=';*.aifc;*.aiff;*.aif;*.au;*.flac;*.ogg;*.opus;*.wav;*.mp3;*.m4a;*.mp4';
+             listOfFormatsForImageread=';*.png;*.bmp;*.jpg;*.jpeg;*.jp2';
+             listOfFormatsForTextImport=';*.txt;*.xlsx;*.xls;*.xlsm;*.xlsb';
 
              if nargin<2 || isempty(fileImportPath)
 
@@ -13359,8 +13391,8 @@ classdef Vocaliscope < matlab.apps.AppBase
 
                  fakefig=uifigure('Visible','off');
                  [files,folder,idx] = uigetfile( ...
-                     {['*.gaw;*.csv;*.wvd;*.mat;*.wav' listOfFormatsForAudioread listOfFormatsForImageread],'gaw or photron csv (type A)/wvd import, Vocaliscope .mat files, audio files, audio from mp4, GAW from PVG'; ...
-                     '*.*','any other file'}, ...
+                     {['*.gaw;*.csv;*.wvd;*.mat;*.wav' listOfFormatsForAudioread listOfFormatsForImageread listOfFormatsForTextImport],'gaw or photron csv (type A)/wvd import, Vocaliscope .mat files, audio files, audio from mp4, GAW from PVG, generic text files'; ...
+                     '*.*','any other text file'}, ...
                      'Select one or more files',lastPath,'MultiSelect','on');
                  close(fakefig);
 
@@ -13397,13 +13429,15 @@ classdef Vocaliscope < matlab.apps.AppBase
              end
 
             
-
+            numberOfChannelsBeforeImport=numel(app.channelNames);
             
 
             if idx==1 % if mixed audio, photron csv type A, or photron wvd
                 for fileNr=1:numel(files)
                     currFile=[folder files{fileNr}];
                     [~,~,currExt]=fileparts(currFile);
+
+                    isGenericTextFile=0;
 
                     %% import audio files
                     if ismember(currExt,strsplit(listOfFormatsForAudioread,';*'))
@@ -13482,26 +13516,48 @@ classdef Vocaliscope < matlab.apps.AppBase
 
                         %% import photron type A csv
                     elseif strcmpi(currExt,'.csv')
-                        [meta,data]=app.readPhotronGraphExportData(currFile);
+                        try
+                            [meta,data]=app.readPhotronGraphExportData(currFile);
+    
+                            newdata=data(:,4:end);
+    
+                            meta(cellfun(@(in) isempty(in) || ~ischar(in),meta(:,1)),1)={''};
+                            fs=meta{contains(meta(:,1),'SamplingRate'),3};
+                            newdataChannelNames=append(files(fileNr),' channel ',meta(end,4:end));
+    
+                            numberOfNewChannelsInThisFile=numel(newdataChannelNames);
+                            whereToFind=false(numberOfNewChannelsInThisFile,numel(app.channelSourcePossibilities));
+                            for channelPossNr=1:numel(app.channelSourcePossibilities)
+                                %whereToFind(:,channelPossNr)=contains(newdataChannelNames,app.channelSourcePossibilities{channelPossNr});
+                                whereToFind(:,channelPossNr)=contains(meta(end,4:end),app.channelSourcePossibilities{channelPossNr});
+                            end
+                            whereToFind(~any(whereToFind,2),contains(app.channelSourcePossibilities,'Raw','IgnoreCase',true))=true;
+    
+                            % maybe better with user input?
+                            [row,~]=find(whereToFind');
+                            newdataChannelSources=app.channelSourcePossibilities(row);
+                            newdataSampleRates=repelem(fs,numberOfNewChannelsInThisFile);
 
-                        newdata=data(:,4:end);
+                        catch
+                            disp('reading as photron csv failed, importing as generic csv...')
+                            [xdata,ydata,sampleRate,columnNames, info] = tabularImport.readTabularFile(currFile);
 
-                        meta(cellfun(@(in) isempty(in) || ~ischar(in),meta(:,1)),1)={''};
-                        fs=meta{contains(meta(:,1),'SamplingRate'),3};
-                        newdataChannelNames=append(files(fileNr),' channel ',meta(end,4:end));
+                            if isempty(xdata) % if the user aborts
+                                continue;
+                            end
 
-                        numberOfNewChannelsInThisFile=numel(newdataChannelNames);
-                        whereToFind=false(numberOfNewChannelsInThisFile,numel(app.channelSourcePossibilities));
-                        for channelPossNr=1:numel(app.channelSourcePossibilities)
-                            %whereToFind(:,channelPossNr)=contains(newdataChannelNames,app.channelSourcePossibilities{channelPossNr});
-                            whereToFind(:,channelPossNr)=contains(meta(end,4:end),app.channelSourcePossibilities{channelPossNr});
+                            isGenericTextFile=1;
+
+                            newdataChannelNames=append(files(fileNr),columnNames);
+                            newdata=ydata;%num2cell(ydata,1);
+                            numberOfNewChannelsInThisFile=size(ydata,2);
+                            newdataChannelSources=repelem({'Raw'},numberOfNewChannelsInThisFile);
+
+                            newxdata=num2cell(repmat(xdata,[1 numberOfNewChannelsInThisFile]),1);
+                            newdataSampleRates=repelem(sampleRate,numberOfNewChannelsInThisFile);
+
+
                         end
-                        whereToFind(~any(whereToFind,2),contains(app.channelSourcePossibilities,'Raw','IgnoreCase',true))=true;
-
-                        % maybe better with user input?
-                        [row,~]=find(whereToFind');
-                        newdataChannelSources=app.channelSourcePossibilities(row);
-                        newdataSampleRates=repelem(fs,numberOfNewChannelsInThisFile);
 
                         %% import vocaliscope mat file
                     elseif strcmpi(currExt,'.mat')
@@ -13571,6 +13627,22 @@ classdef Vocaliscope < matlab.apps.AppBase
                         numberOfNewChannelsInThisFile=1;
                         newdata=out(:,2);
 
+                    else % any other generic text file
+                        [xdata,ydata,sampleRate,columnNames, info] = tabularImport.readTabularFile(currFile);
+
+                        if isempty(xdata) % if the user aborts
+                            continue;
+                        end
+
+                        isGenericTextFile=1;
+
+                        newdataChannelNames=append(files(fileNr),columnNames);
+                        newdata=ydata;%num2cell(ydata,1);
+                        numberOfNewChannelsInThisFile=size(ydata,2);
+                        newdataChannelSources=repelem({'Raw'},numberOfNewChannelsInThisFile);
+
+                        newxdata=num2cell(repmat(xdata,[1 numberOfNewChannelsInThisFile]),1);
+                        newdataSampleRates=repelem(sampleRate,numberOfNewChannelsInThisFile);
                     end
 
                     if numel(app.channelLag)>0
@@ -13715,7 +13787,12 @@ classdef Vocaliscope < matlab.apps.AppBase
                             if ~strcmpi(currExt,'.mat')
                                 newYValues=mat2cell(newdata, size(newdata, 1), ones(1, numberOfNewChannelsInThisFile));
                                 app.channelYValues=[app.channelYValues newYValues];
-                                app.channelXValues=[app.channelXValues mat2cell(repmat((0:size(newdata,1)-1)'/newdataSampleRates(1),[1 numberOfNewChannelsInThisFile]), size(newdata, 1), ones(1, numberOfNewChannelsInThisFile))];
+
+                                if ~isGenericTextFile
+                                    app.channelXValues=[app.channelXValues mat2cell(repmat((0:size(newdata,1)-1)'/newdataSampleRates(1),[1 numberOfNewChannelsInThisFile]), size(newdata, 1), ones(1, numberOfNewChannelsInThisFile))];
+                                else
+                                    app.channelXValues=[app.channelXValues newxdata];
+                                end
                                 app.channelNames=[app.channelNames newdataChannelNames];
                                 app.channelSource=[app.channelSource newdataChannelSources];
                                 app.channelSampleRates=[app.channelSampleRates newdataSampleRates];
@@ -13777,21 +13854,30 @@ classdef Vocaliscope < matlab.apps.AppBase
                 figure(app.UIFigure);
             end
 
-
+            numberOfChannelsAfterImport=numel(app.channelNames);
+            
 
             app.availableChannelsTable.Data=[app.channelNames(:) app.channelSource(:)];
-            app.availableChannelsTable.Selection=1:numel(app.channelNames);
+            app.availableChannelsTable.Selection=[app.availableChannelsTable.Selection numberOfChannelsBeforeImport+1:numberOfChannelsAfterImport];%1:numel(app.channelNames);
 
             if isempty(app.availableChannelsTable.Data)
                 app.titleTimer.start();
                 return;
             end
 
-            profile on;
+            % the maximum choosable number of showable entries is 8 or the
+            % number of available channels (the smaller of the two)
+            app.showngraphswithoutscrollingDropDown.Enable='on';
+            app.showngraphswithoutscrollingDropDown.Items=strsplit(num2str(1:min([numberOfChannelsAfterImport 8])));
+            if isempty(app.showngraphswithoutscrollingDropDown.Value)
+                app.showngraphswithoutscrollingDropDown.Value=app.showngraphswithoutscrollingDropDown.Items{end};
+            end
 
-            app.refreshTimeAndSpectralPlotData();
+            %profile on;
 
-            profile viewer;
+            app.refreshTimeAndSpectralPlotData(numberOfChannelsBeforeImport+1:numberOfChannelsAfterImport);
+
+           % profile viewer;
 
             %drawnow;
             %xlim(app.channelAxes,'tight');
@@ -13977,7 +14063,7 @@ classdef Vocaliscope < matlab.apps.AppBase
                     progDialog=uiprogressdlg(app.UIFigure,'Title','Calculating parameters...',...
                         'Message','Preparing parallel computing...','Cancelable','on');
     
-                    app.createPoolIfNonexistent();
+                    app.createPoolIfNonexistent(false);
                 else
                     progDialog=uiprogressdlg(app.UIFigure,'Title','Calculating parameters...',...
                         'Message',['0 of ' num2str(nChannels) ' channels complete'],'Cancelable','on');
@@ -14119,27 +14205,28 @@ classdef Vocaliscope < matlab.apps.AppBase
                     constDataY= parallel.pool.Constant(currYDataExcerpt);
                     constDataX= parallel.pool.Constant(currXDataExcerpt);
                     tmpStart=currXDataExcerpt(1);
-                    parfor pitchMethodNr=1:numel(pitchMethod)
+                    app.createPoolIfNonexistent();
+                    parfor parforPitchMethodNr=1:numel(pitchMethod)
                         % no windowing needed since pitch function applies a
                         % window by itself
                         % SRH uses periodic hann, NCF needs no windowing
                         % and all other use periodic hamming window
                         try
-                            if ismember(pitchMethod{pitchMethodNr},{'NCF','PEF','CEP','LHS','SRH'})
-                                [pitchesY{pitchMethodNr},loc]=pitch(constDataY.Value(:),currFs,'Method',pitchMethod{pitchMethodNr},"Range",foSearchRange,'WindowLength',round(windowLengthTime*currFs),'OverlapLength',round(windowOverlapTime*currFs));
-                                pitchesX{pitchMethodNr}=double(constDataX.Value(loc));
-                            elseif strcmpi(pitchMethod{pitchMethodNr},'SWIPEprime')
-                                [pitchesY{pitchMethodNr},tempPitchT] = PitchTracker.SWIPEP.swipep(constDataY.Value(:),currFs,foSearchRange,windowLengthTime-windowOverlapTime,[],[],windowOverlapTime/windowLengthTime);
-                                pitchesX{pitchMethodNr}=tempPitchT+tmpStart;
-                            elseif strcmpi(pitchMethod{pitchMethodNr},'SHR')
-                                [tempPitchT,pitchesY{pitchMethodNr}] = SHRP.shrp(constDataY.Value(:),currFs,foSearchRange,windowLengthTime*1000,windowOverlapTime*1000,min(currFs/2,foSearchRange(2)*5)); % according to Herbst we should use 5times the highest fo. https://doi.org/10.1016/j.jvoice.2019.11.005 
-                                pitchesX{pitchMethodNr}=tempPitchT/1000+tmpStart;
+                            if ismember(pitchMethod{parforPitchMethodNr},{'NCF','PEF','CEP','LHS','SRH'})
+                                [pitchesY{parforPitchMethodNr},loc]=pitch(constDataY.Value(:),currFs,'Method',pitchMethod{parforPitchMethodNr},"Range",foSearchRange,'WindowLength',round(windowLengthTime*currFs),'OverlapLength',round(windowOverlapTime*currFs));
+                                pitchesX{parforPitchMethodNr}=double(constDataX.Value(loc));
+                            elseif strcmpi(pitchMethod{parforPitchMethodNr},'SWIPEprime')
+                                [pitchesY{parforPitchMethodNr},tempPitchT] = PitchTracker.SWIPEP.swipep(constDataY.Value(:),currFs,foSearchRange,windowLengthTime-windowOverlapTime,[],[],windowOverlapTime/windowLengthTime);
+                                pitchesX{parforPitchMethodNr}=tempPitchT+tmpStart;
+                            elseif strcmpi(pitchMethod{parforPitchMethodNr},'SHR')
+                                [tempPitchT,pitchesY{parforPitchMethodNr}] = SHRP.shrp(constDataY.Value(:),currFs,foSearchRange,windowLengthTime*1000,windowOverlapTime*1000,min(currFs/2,foSearchRange(2)*5)); % according to Herbst we should use 5times the highest fo. https://doi.org/10.1016/j.jvoice.2019.11.005 
+                                pitchesX{parforPitchMethodNr}=tempPitchT/1000+tmpStart;
                             end
                         catch ME
-                            disp(['Error during pitch calculation using ' pitchMethod{pitchMethodNr} ' method:']);
+                            disp(['Error during pitch calculation using ' pitchMethod{parforPitchMethodNr} ' method:']);
                             disp(ME.getReport());
-                            pitchesY{pitchMethodNr}=[];
-                            pitchesX{pitchMethodNr}=[];
+                            pitchesY{parforPitchMethodNr}=[];
+                            pitchesX{parforPitchMethodNr}=[];
                         end
                     end
 
@@ -14352,7 +14439,7 @@ classdef Vocaliscope < matlab.apps.AppBase
                             'MedianFilterLength',5);
                     elseif strcmpi(app.calculationSettings.pitch.timeDependentUpperMaxAlgorithm,'SWIPE''')
                         [fmaxPredicted,tPitch] = PitchTracker.SWIPEP.swipep(currYDataExcerpt(:),currFs,...
-                                                [min(app.calculationSettings.fo.Min,currFs/fs-1) min(app.calculationSettings.fo.Max,floor(currFs/2))],...
+                                                [min(app.calculationSettings.fo.Min,currFs/2-1) min(app.calculationSettings.fo.Max,floor(currFs/2))],...
                                                 app.calculationSettings.pitch.timeWindow-app.calculationSettings.pitch.timeWindowOverlap,[],[],...
                                                 app.calculationSettings.pitch.timeWindowOverlap/app.calculationSettings.pitch.timeWindow);
                         fmaxPredicted=movmedian(fmaxPredicted,5);
@@ -14554,7 +14641,7 @@ classdef Vocaliscope < matlab.apps.AppBase
 
 
                 nTotalCycles = numel(cycleBorderVals) - 1;
-                [allCyclesYDataRange, allCyclesYDataEnergy,allCyclesOQs,allCyclesClQs,allCyclesOpQs,allCyclesGGI,allCyclesPlateauQuotient,allCyclesYDataMax,allCyclesYDataMin,allCyclesYDataDerivateMin] = deal(nan(1, nTotalCycles));
+                [allCyclesYDataRange, allCyclesYDataEnergy,allCyclesOQs,allCyclesClQs,allCyclesOpQs,allCyclesOQsRel,allCyclesClQsRel,allCyclesOpQsRel,allCyclesGGI,allCyclesPlateauQuotient,allCyclesYDataMax,allCyclesYDataMin,allCyclesYDataDerivateMin] = deal(nan(1, nTotalCycles));
 
                 % for multiple values per cycle
                 FDnumberOfHarmonics=app.calculationSettings.SampleEntropyFD.numberOfHarmonics;
@@ -14563,10 +14650,13 @@ classdef Vocaliscope < matlab.apps.AppBase
                 allOQBorders=[];
                 allClQBorders=[];
 
+                allOQBordersRel=[];
+                allClQBordersRel=[];
+
                 %% precompute values for all cycles
                 for cycleNr = 1:nTotalCycles
                     currCycleExcerpt=currXDataExcerpt >= cycleBorderVals(cycleNr) & ...
-                        currXDataExcerpt <= cycleBorderVals(cycleNr + 1);
+                                     currXDataExcerpt <= cycleBorderVals(cycleNr + 1);
                     currCycleYData = currYDataExcerpt(currCycleExcerpt);
                     currCycleXData = currXDataExcerpt(currCycleExcerpt);
 
@@ -14577,7 +14667,7 @@ classdef Vocaliscope < matlab.apps.AppBase
                     allCyclesYDataRange(cycleNr) = cycleRange;
                     allCyclesYDataEnergy(cycleNr) = sum(currCycleYData .^ 2);
                     allCyclesGGI(cycleNr)=cycleMin/cycleMax;
-                    allCyclesPlateauQuotient(cycleNr)=sum(currCycleYData>=cycleMin+app.calculationSettings.plateauQuotientThreshold*cycleRange);
+
                     allCyclesYDataMax(cycleNr) = cycleMax;
                     allCyclesYDataMin(cycleNr) = cycleMin;
                     allCyclesYDataDerivateMin(cycleNr) = min(gradient(currCycleYData))*currFs;
@@ -14589,8 +14679,10 @@ classdef Vocaliscope < matlab.apps.AppBase
                         % !!!remember!!! the cycles are (at the moment) max based because min
                         % based values are difficult due to noise
                         if strcmpi(app.channelSource{channelNr},'GAW')
-                            zeroThreshold=app.calculationSettings.GAWopenThresholdPercentage*cycleMax;
 
+                            %% absolute thresholding, i.e. relative to cycle maximum
+                            zeroThreshold=app.calculationSettings.GAWopenThresholdPercentage*cycleMax;
+                            
                             closedDuration=sum(currCycleYData<=zeroThreshold);
                             openDuration=total-closedDuration;
                             openingDuration=sum(currCycleYData(cycleMinIdx:end)>zeroThreshold);
@@ -14602,6 +14694,22 @@ classdef Vocaliscope < matlab.apps.AppBase
                                 allClQBorders=[allClQBorders currCycleXData(1) currCycleXData(closedIdx(1)) NaN];
                             end
 
+                            allCyclesPlateauQuotient(cycleNr)=sum(currCycleYData>=cycleMin+app.calculationSettings.plateauQuotientThreshold*cycleRange)/openDuration;
+
+                            %% relative thresholding, i.e. relative to cycle range and minimum
+                            zeroThresholdRel=app.calculationSettings.GAWopenThresholdPercentage*cycleRange+cycleMin;
+
+                            closedDurationRel=sum(currCycleYData<=zeroThresholdRel);
+                            openDurationRel=total-closedDurationRel;
+                            openingDurationRel=sum(currCycleYData(cycleMinIdx:end)>zeroThresholdRel);
+                            closingDurationRel=sum(currCycleYData(1:cycleMinIdx)>zeroThresholdRel);
+
+                            closedIdxRel=find(currCycleYData<=zeroThresholdRel);
+                            if numel(closedIdxRel)>=2
+                                allOQBordersRel=[allOQBordersRel  currCycleXData(closedIdxRel(1)) NaN currCycleXData(closedIdxRel(end))  ];
+                                allClQBordersRel=[allClQBordersRel currCycleXData(1) currCycleXData(closedIdxRel(1)) NaN];
+                            end
+
                         elseif strcmpi(app.channelSource{channelNr},'EGG')
                             % howard for the moment % closed according DEGG,
                             % open according 3/7
@@ -14609,18 +14717,27 @@ classdef Vocaliscope < matlab.apps.AppBase
                             [~,maxDEGGidx]=max(cycleGradient);
                             closingDuration=maxDEGGidx-cycleMinIdx;
 
-                            openingDuration=find(cycleMin+3/7*(currCycleYData(1)-cycleMin)>=currCycleYData(1:cycleMinIdx),1,"first");
+                            openingInstant=find(cycleMin+3/7*(currCycleYData(1)-cycleMin)>=currCycleYData(1:cycleMinIdx),1,"first");
+                            openingDuration = cycleMinIdx - openingInstant;
 
-                            openDuration=closingDuration+(cycleMinIdx-openingDuration);
+                            openDuration=closingDuration + openingDuration;
                             closedDuration=total-openDuration;
 
-                            allOQBorders=[allOQBorders currCycleXData(openingDuration) currCycleXData(maxDEGGidx) NaN];
+                            allOQBorders=[allOQBorders currCycleXData(openingInstant) currCycleXData(maxDEGGidx) NaN];
                             allClQBorders=[allClQBorders currCycleXData(cycleMinIdx) currCycleXData(maxDEGGidx) NaN];
+
+                            allCyclesPlateauQuotient(cycleNr)=sum(currCycleYData<=cycleMax-app.calculationSettings.plateauQuotientThreshold*cycleRange)/openDuration;
 
                         end
                         allCyclesOQs(cycleNr)=openDuration/total;
                         allCyclesClQs(cycleNr)=closingDuration/total;
                         allCyclesOpQs(cycleNr)=openingDuration/total;
+
+                        if strcmpi(app.channelSource{channelNr},'GAW')
+                            allCyclesOQsRel(cycleNr)=openDurationRel/total;
+                            allCyclesClQsRel(cycleNr)=closingDurationRel/total;
+                            allCyclesOpQsRel(cycleNr)=openingDurationRel/total;
+                        end
                     end
 
                     %% calculate FD based SampEn for fixed number of cycles
@@ -14652,6 +14769,8 @@ classdef Vocaliscope < matlab.apps.AppBase
                 end
 
                 if strcmpi(app.channelSource{channelNr},'GAW')
+
+                    %% for absolute quotient thresholding
                     firstNaN=find(isnan(allOQBorders),1,'first');
                     if firstNaN<=2
                         allOQBorders(1:firstNaN)=[]; % should only be relevant for max based GAW, since there the open phase is cut by cycle borders
@@ -14660,6 +14779,17 @@ classdef Vocaliscope < matlab.apps.AppBase
                     lastNaN=find(isnan(allOQBorders),1,'last');
                     if lastNaN>=numel(allOQBorders)-1
                         allOQBorders(lastNaN+1:end)=[]; % should only be relevant for max based GAW, since there the open phase is cut by cycle borders
+                    end
+
+                    %% for relative quotient thresholding
+                    firstNaN=find(isnan(allOQBordersRel),1,'first');
+                    if firstNaN<=2
+                        allOQBordersRel(1:firstNaN)=[]; % should only be relevant for max based GAW, since there the open phase is cut by cycle borders
+                    end
+
+                    lastNaN=find(isnan(allOQBordersRel),1,'last');
+                    if lastNaN>=numel(allOQBordersRel)-1
+                        allOQBordersRel(lastNaN+1:end)=[]; % should only be relevant for max based GAW, since there the open phase is cut by cycle borders
                     end
                 end
 
@@ -14670,12 +14800,30 @@ classdef Vocaliscope < matlab.apps.AppBase
                     allClQBorders=reshape(allClQBorders,3,[])';
                     allClQBorders(:,3)=[]; % remove NaN values
 
+                    %% if GAW, there exists also a relative version
+                    if strcmpi(app.channelSource{channelNr},'GAW')
+                        allOQBordersRel=reshape(allOQBordersRel,3,[])';
+                        allOQBordersRel(:,3)=[]; % remove NaN values
+
+                        allClQBordersRel=reshape(allClQBordersRel,3,[])';
+                        allClQBordersRel(:,3)=[]; % remove NaN values
+                    end
+                    %%
+
+
                     app.calculationResults.channelResults(channelNr).allOQBorders=allOQBorders;
                     app.calculationResults.channelResults(channelNr).allOQBorders_Unit="s";
                     app.calculationResults.channelResults(channelNr).allClQBorders=allClQBorders;
                     app.calculationResults.channelResults(channelNr).allClQBorders_Unit="s";
 
-                    %if ismember(channelNr,app.availableChannelsTable.Selection)
+                    %% if GAW, there exists also a relative version
+                    if strcmpi(app.channelSource{channelNr},'GAW')
+                        app.calculationResults.channelResults(channelNr).allOQBordersRel=allOQBordersRel;
+                        app.calculationResults.channelResults(channelNr).allOQBordersRel_Unit="s";
+                        app.calculationResults.channelResults(channelNr).allClQBordersRel=allClQBordersRel;
+                        app.calculationResults.channelResults(channelNr).allClQBordersRel_Unit="s";
+                    end
+                    %%
 
                     if app.HideOQareasButton.Value==1
                         oqvis='off';
@@ -14688,9 +14836,13 @@ classdef Vocaliscope < matlab.apps.AppBase
                         clqvis='on';
                     end
 
-                    %channelNr=find(app.availableChannelsTable.Selection==channelNr,1);
-                    app.cycleOQHandle(channelNr)=app.addManyPatchesAsSinglePatch(channelNr,allOQBorders,[0.2 0 0],[],oqvis);
-                    app.cycleClQHandle(channelNr)=app.addManyPatchesAsSinglePatch(channelNr,allClQBorders,[0 0.2 0],[],clqvis);
+                    if ~strcmpi(app.channelSource{channelNr},'GAW') || ~app.calculationSettings.cycleDuration.showRelativeGAWphaseThresholds
+                        app.cycleOQHandle(channelNr)=app.addManyPatchesAsSinglePatch(channelNr,allOQBorders,[0.2 0 0],[],oqvis);
+                        app.cycleClQHandle(channelNr)=app.addManyPatchesAsSinglePatch(channelNr,allClQBorders,[0 0.2 0],[],clqvis);
+                    else
+                        app.cycleOQHandle(channelNr)=app.addManyPatchesAsSinglePatch(channelNr,allOQBordersRel,[0.2 0 0],[],oqvis);
+                        app.cycleClQHandle(channelNr)=app.addManyPatchesAsSinglePatch(channelNr,allClQBordersRel,[0 0.2 0],[],clqvis);
+                    end
 
                     uistack(app.cycleOQHandle(channelNr),'bottom');
                     %end
@@ -14782,6 +14934,7 @@ classdef Vocaliscope < matlab.apps.AppBase
                             phaseThr=app.calculationSettings.SampleEntropyFD.distanceSTDthresholdPhase;
                             magThr=app.calculationSettings.SampleEntropyFD.distanceSTDthresholdMagnitude;
 
+                            app.createPoolIfNonexistent();
                             parfor subNr=1:3
                                 switch subNr
                                     case 1
@@ -14903,10 +15056,10 @@ classdef Vocaliscope < matlab.apps.AppBase
                         currWindowCyclesOQValues = allCyclesOQs(whichCycles);
                         currWindowCyclesClQValues = allCyclesClQs(whichCycles);
                         currWindowCyclesOpQValues = allCyclesOpQs(whichCycles);
+                        currWindowCyclesPlateauQuotient = allCyclesPlateauQuotient(whichCycles);
                     end
 
                     currWindowCyclesGGI = allCyclesGGI(whichCycles);
-                    currWindowCyclesPlateauQuotient = allCyclesPlateauQuotient(whichCycles);
                     currWindowCyclesMinDerivate = allCyclesYDataDerivateMin(whichCycles);
 
                     % Precompute mean values to avoid redundant calculations
@@ -14932,7 +15085,7 @@ classdef Vocaliscope < matlab.apps.AppBase
 
                     app.calculationResults.channelResults(channelNr).CycleYDataRange_median(windowNr)=medianCurrWindowCyclesYDataRange;
                     app.calculationResults.channelResults(channelNr).CycleDurations_median(windowNr)=medianCurrWindowCyclesDurations;
-                    app.calculationResults.channelResults(channelNr).CycleYDataEnergy_median(windowNr)=meanCurrWindowCyclesYDataEnergy;
+                    app.calculationResults.channelResults(channelNr).CycleYDataEnergy_median(windowNr)=medianCurrWindowCyclesYDataEnergy;
                     if windowNr==1
                         app.calculationResults.channelResults(channelNr).CycleYDataRange_median_Unit="channelUnit";
                         app.calculationResults.channelResults(channelNr).CycleDurations_median_Unit="s";
@@ -15111,7 +15264,7 @@ classdef Vocaliscope < matlab.apps.AppBase
                     end
                     %% Period Perturbation
                     % mean Jitter
-                    if app.calculationSettings.meanJitter.doCalculate
+                    if app.calculationSettings.meanJitter.doCalculate || app.calculationSettings.jitterInPercent.doCalculate || app.calculationSettings.jitterRatio.doCalculate % the OR statements are due to dependency of Jitter Ratio and/or Jitter
                         app.calculationResults.channelResults(channelNr).meanJitter(windowNr)      = mean(abs(diff(currWindowCyclesDurations)));
                         if windowNr==1
                             app.calculationResults.channelResults(channelNr).meanJitter_Unit="s";
@@ -15119,7 +15272,7 @@ classdef Vocaliscope < matlab.apps.AppBase
                     end
 
                     % Jitter in percent
-                    if app.calculationSettings.jitterInPercent.doCalculate
+                    if app.calculationSettings.jitterInPercent.doCalculate || app.calculationSettings.jitterRatio.doCalculate
                         app.calculationResults.channelResults(channelNr).jitter(windowNr) = app.calculationResults.channelResults(channelNr).meanJitter(windowNr) / mean(currWindowCyclesDurations) * 100;
                         if windowNr==1
                             app.calculationResults.channelResults(channelNr).jitter_Unit="%";
@@ -15449,58 +15602,94 @@ classdef Vocaliscope < matlab.apps.AppBase
                                     % median which tells us which is more
                                     % commonly true
 
-                                    highestHarmonicFreqOrder=median(highestHarmonicFreqOrder);
+                                    highestHarmonicFreqOrder=round(median(highestHarmonicFreqOrder));
 
 
                                     %%% saving highest harmonic and H1 H2 H3 H4
                                    
 
-                                    app.calculationResults.channelResults(channelNr).(['highestMedianHarmonicOrderUsing' pitchMethod{pitchMethodNr}])(windowNr)=highestHarmonicFreqOrder;
+                                    app.calculationResults.channelResults(channelNr).(['highestHarmonicOrderUsing' pitchMethod{pitchMethodNr} '_median'])(windowNr)=highestHarmonicFreqOrder;
+                                    app.calculationResults.channelResults(channelNr).(['highestHarmonicOrderUsing' pitchMethod{pitchMethodNr} '_median_Unit'])='-';
 
-                                    % H1
+                                    %% H1
                                     app.calculationResults.channelResults(channelNr).(['H1using' pitchMethod{pitchMethodNr} '_mean'])(windowNr)=mean(currWindowHarmonicsAmps(1,:));
                                     app.calculationResults.channelResults(channelNr).(['H1using' pitchMethod{pitchMethodNr} '_median'])(windowNr)=median(currWindowHarmonicsAmps(1,:));
+                                    % Unit
+                                    app.calculationResults.channelResults(channelNr).(['H1using' pitchMethod{pitchMethodNr} '_mean_Unit'])='dB';
+                                    app.calculationResults.channelResults(channelNr).(['H1using' pitchMethod{pitchMethodNr} '_median_Unit'])='dB';
 
-                                    % residual H1 ref window energy
+                                    %% residual H1 ref window energy
                                     window_energy_dB_without_mean = 20*log10(rms(currWindowYData-mean(currWindowYData)));
                                     app.calculationResults.channelResults(channelNr).(['H1ResidualUsing' pitchMethod{pitchMethodNr} '_mean'])(windowNr)=app.calculationResults.channelResults(channelNr).(['H1using' pitchMethod{pitchMethodNr} '_mean'])(windowNr)-window_energy_dB_without_mean;
                                     app.calculationResults.channelResults(channelNr).(['H1ResidualUsing' pitchMethod{pitchMethodNr} '_median'])(windowNr)=app.calculationResults.channelResults(channelNr).(['H1using' pitchMethod{pitchMethodNr} '_median'])(windowNr)-window_energy_dB_without_mean;
+                                    % Unit
+                                    app.calculationResults.channelResults(channelNr).(['H1ResidualUsing' pitchMethod{pitchMethodNr} '_mean_Unit'])='dB';
+                                    app.calculationResults.channelResults(channelNr).(['H1ResidualUsing' pitchMethod{pitchMethodNr} '_median_Unit'])='dB';
 
 
                                     if size(currWindowHarmonicsAmps,1)>1 % normally this should be the case since internally at least 4 harmonics are checked, but for the case that the harmonics frequency lies outside max(fSpectrogram), this could not be fullfilled
-                                        % H2
+                                        %% H2
                                         app.calculationResults.channelResults(channelNr).(['H2using' pitchMethod{pitchMethodNr} '_mean'])(windowNr)=mean(currWindowHarmonicsAmps(2,:));
                                         app.calculationResults.channelResults(channelNr).(['H2using' pitchMethod{pitchMethodNr} '_median'])(windowNr)=median(currWindowHarmonicsAmps(2,:));
+                                        % Unit
+                                        app.calculationResults.channelResults(channelNr).(['H2using' pitchMethod{pitchMethodNr} '_mean_Unit'])='dB';
+                                        app.calculationResults.channelResults(channelNr).(['H2using' pitchMethod{pitchMethodNr} '_median_Unit'])='dB';
 
-                                        % H1H2
+                                        %% H1H2
                                         app.calculationResults.channelResults(channelNr).(['H1H2using' pitchMethod{pitchMethodNr} '_mean'])(windowNr)=mean(currWindowHarmonicsAmps(1,:)-currWindowHarmonicsAmps(2,:));
                                         app.calculationResults.channelResults(channelNr).(['H1H2using' pitchMethod{pitchMethodNr} '_median'])(windowNr)=median(currWindowHarmonicsAmps(1,:)-currWindowHarmonicsAmps(2,:));
+                                        % Unit
+                                        app.calculationResults.channelResults(channelNr).(['H1H2using' pitchMethod{pitchMethodNr} '_mean_Unit'])='dB';
+                                        app.calculationResults.channelResults(channelNr).(['H1H2using' pitchMethod{pitchMethodNr} '_median_Unit'])='dB';
                                     end
                                     if size(currWindowHarmonicsAmps,1)>2 % normally this should be the case since internally at least 4 harmonics are checked, but for the case that the harmonics frequency lies outside max(fSpectrogram), this could not be fullfilled
-                                        % H3
+                                        %% H3
                                         app.calculationResults.channelResults(channelNr).(['H3using' pitchMethod{pitchMethodNr} '_mean'])(windowNr)=mean(currWindowHarmonicsAmps(3,:));
                                         app.calculationResults.channelResults(channelNr).(['H3using' pitchMethod{pitchMethodNr} '_median'])(windowNr)=median(currWindowHarmonicsAmps(3,:));
-                                        % H1H3
+                                        % Unit
+                                        app.calculationResults.channelResults(channelNr).(['H3using' pitchMethod{pitchMethodNr} '_mean_Unit'])='dB';
+                                        app.calculationResults.channelResults(channelNr).(['H3using' pitchMethod{pitchMethodNr} '_median_Unit'])='dB';
+
+                                        %% H1H3
                                         app.calculationResults.channelResults(channelNr).(['H1H3using' pitchMethod{pitchMethodNr} '_mean'])(windowNr)=mean(currWindowHarmonicsAmps(1,:)-currWindowHarmonicsAmps(3,:));
                                         app.calculationResults.channelResults(channelNr).(['H1H3using' pitchMethod{pitchMethodNr} '_median'])(windowNr)=median(currWindowHarmonicsAmps(1,:)-currWindowHarmonicsAmps(3,:));
-                                        % H2H3
+                                        % Unit
+                                        app.calculationResults.channelResults(channelNr).(['H1H3using' pitchMethod{pitchMethodNr} '_mean_Unit'])='dB';
+                                        app.calculationResults.channelResults(channelNr).(['H1H3using' pitchMethod{pitchMethodNr} '_median_Unit'])='dB';
+
+                                        %% H2H3
                                         app.calculationResults.channelResults(channelNr).(['H2H3using' pitchMethod{pitchMethodNr} '_mean'])(windowNr)=mean(currWindowHarmonicsAmps(2,:)-currWindowHarmonicsAmps(3,:));
                                         app.calculationResults.channelResults(channelNr).(['H2H3using' pitchMethod{pitchMethodNr} '_median'])(windowNr)=median(currWindowHarmonicsAmps(2,:)-currWindowHarmonicsAmps(3,:));
+                                        % Unit
+                                        app.calculationResults.channelResults(channelNr).(['H2H3using' pitchMethod{pitchMethodNr} '_mean_Unit'])='dB';
+                                        app.calculationResults.channelResults(channelNr).(['H2H3using' pitchMethod{pitchMethodNr} '_median_Unit'])='dB';
 
                                     end
                                     if size(currWindowHarmonicsAmps,1)>3 % normally this should be the case since internally at least 4 harmonics are checked, but for the case that the harmonics frequency lies outside max(fSpectrogram), this could not be fullfilled
-                                        % H4
+                                        %% H4
                                         app.calculationResults.channelResults(channelNr).(['H3using' pitchMethod{pitchMethodNr} '_mean'])(windowNr)=mean(currWindowHarmonicsAmps(4,:));
                                         app.calculationResults.channelResults(channelNr).(['H3using' pitchMethod{pitchMethodNr} '_median'])(windowNr)=median(currWindowHarmonicsAmps(4,:));
-                                        % H1H4
+                                        % Unit
+                                        app.calculationResults.channelResults(channelNr).(['H3using' pitchMethod{pitchMethodNr} '_mean_Unit'])='dB';
+                                        app.calculationResults.channelResults(channelNr).(['H3using' pitchMethod{pitchMethodNr} '_median_Unit'])='dB';
+                                        %% H1H4
                                         app.calculationResults.channelResults(channelNr).(['H1H4using' pitchMethod{pitchMethodNr} '_mean'])(windowNr)=mean(currWindowHarmonicsAmps(1,:)-currWindowHarmonicsAmps(4,:));
                                         app.calculationResults.channelResults(channelNr).(['H1H4using' pitchMethod{pitchMethodNr} '_median'])(windowNr)=median(currWindowHarmonicsAmps(1,:)-currWindowHarmonicsAmps(4,:));
-                                        % H2H4
+                                        % Unit
+                                        app.calculationResults.channelResults(channelNr).(['H1H4using' pitchMethod{pitchMethodNr} '_mean_Unit'])='dB';
+                                        app.calculationResults.channelResults(channelNr).(['H1H4using' pitchMethod{pitchMethodNr} '_median_Unit'])='dB';
+                                        %% H2H4
                                         app.calculationResults.channelResults(channelNr).(['H2H4using' pitchMethod{pitchMethodNr} '_mean'])(windowNr)=mean(currWindowHarmonicsAmps(2,:)-currWindowHarmonicsAmps(4,:));
                                         app.calculationResults.channelResults(channelNr).(['H2H4using' pitchMethod{pitchMethodNr} '_median'])(windowNr)=median(currWindowHarmonicsAmps(2,:)-currWindowHarmonicsAmps(4,:));
-                                        % H3H4
+                                        % Unit
+                                        app.calculationResults.channelResults(channelNr).(['H2H4using' pitchMethod{pitchMethodNr} '_mean_Unit'])='dB';
+                                        app.calculationResults.channelResults(channelNr).(['H2H4using' pitchMethod{pitchMethodNr} '_median_Unit'])='dB';
+                                        %% H3H4
                                         app.calculationResults.channelResults(channelNr).(['H3H4using' pitchMethod{pitchMethodNr} '_mean'])(windowNr)=mean(currWindowHarmonicsAmps(3,:)-currWindowHarmonicsAmps(4,:));
                                         app.calculationResults.channelResults(channelNr).(['H3H4using' pitchMethod{pitchMethodNr} '_median'])(windowNr)=median(currWindowHarmonicsAmps(3,:)-currWindowHarmonicsAmps(4,:));
+                                        % Unit
+                                        app.calculationResults.channelResults(channelNr).(['H3H4using' pitchMethod{pitchMethodNr} '_mean_Unit'])='dB';
+                                        app.calculationResults.channelResults(channelNr).(['H3H4using' pitchMethod{pitchMethodNr} '_median_Unit'])='dB';
                                     end
 
                                  
@@ -15527,54 +15716,94 @@ classdef Vocaliscope < matlab.apps.AppBase
                                     highestSubharmonicFreqOrder=median(lowestSubharmonicFreqIdx);
 
                                     
-                                    % highest subharmonic order
-
-                                    app.calculationResults.channelResults(channelNr).(['highestMedianSubharmonicOrderUsing' pitchMethod{pitchMethodNr}])(windowNr)=highestSubharmonicFreqOrder;
+                                    %% highestSubharmonicOrder
                                     
-                                    % S1
+                                    app.calculationResults.channelResults(channelNr).(['highestSubharmonicOrderUsing' pitchMethod{pitchMethodNr} '_median'])(windowNr)=highestSubharmonicFreqOrder;
+                                    % Unit
+                                    app.calculationResults.channelResults(channelNr).(['highestSubharmonicOrderUsing' pitchMethod{pitchMethodNr} '_median_Unit'])='-';
+
+                                    %% S1
                                     app.calculationResults.channelResults(channelNr).(['S1using' pitchMethod{pitchMethodNr} '_mean'])(windowNr)=mean(currWindowSubharmonicsAmps(1,:));
                                     app.calculationResults.channelResults(channelNr).(['S1using' pitchMethod{pitchMethodNr} '_median'])(windowNr)=median(currWindowSubharmonicsAmps(1,:));
+                                    % Unit
+                                    app.calculationResults.channelResults(channelNr).(['S1using' pitchMethod{pitchMethodNr} '_mean_Unit'])='dB';
+                                    app.calculationResults.channelResults(channelNr).(['S1using' pitchMethod{pitchMethodNr} '_median_Unit'])='dB';
 
-                                    % residual S1 ref window energy
+                                    %% S1Residual (residual S1 ref window energy)
                                     window_energy_dB_without_mean = 20*log10(rms(currWindowYData-mean(currWindowYData)));
                                     app.calculationResults.channelResults(channelNr).(['S1ResidualUsing' pitchMethod{pitchMethodNr} '_mean'])(windowNr)=app.calculationResults.channelResults(channelNr).(['S1using' pitchMethod{pitchMethodNr} '_mean'])(windowNr)-window_energy_dB_without_mean;
                                     app.calculationResults.channelResults(channelNr).(['S1ResidualUsing' pitchMethod{pitchMethodNr} '_median'])(windowNr)=app.calculationResults.channelResults(channelNr).(['S1using' pitchMethod{pitchMethodNr} '_median'])(windowNr)-window_energy_dB_without_mean;
-
+                                    % Unit
+                                    app.calculationResults.channelResults(channelNr).(['S1ResidualUsing' pitchMethod{pitchMethodNr} '_mean_Unit'])='dB';
+                                    app.calculationResults.channelResults(channelNr).(['S1ResidualUsing' pitchMethod{pitchMethodNr} '_median_Unit'])='dB';
 
                                     if size(currWindowSubharmonicsAmps,1)>1 % normally this should be the case since internally at least 4 harmonics are checked, but for the case that the harmonics frequency lies outside max(fSpectrogram), this could not be fullfilled
-                                        % S2
+                                        %% S2
                                         app.calculationResults.channelResults(channelNr).(['S2using' pitchMethod{pitchMethodNr} '_mean'])(windowNr)=mean(currWindowSubharmonicsAmps(2,:));
                                         app.calculationResults.channelResults(channelNr).(['S2using' pitchMethod{pitchMethodNr} '_median'])(windowNr)=median(currWindowSubharmonicsAmps(2,:));
+                                        % Unit
+                                        app.calculationResults.channelResults(channelNr).(['S2using' pitchMethod{pitchMethodNr} '_mean_Unit'])='dB';
+                                        app.calculationResults.channelResults(channelNr).(['S2using' pitchMethod{pitchMethodNr} '_median_Unit'])='dB';
 
-                                        % S1S2
+                                        %% S1S2
                                         app.calculationResults.channelResults(channelNr).(['S1S2using' pitchMethod{pitchMethodNr} '_mean'])(windowNr)=mean(currWindowSubharmonicsAmps(1,:)-currWindowSubharmonicsAmps(2,:));
                                         app.calculationResults.channelResults(channelNr).(['S1S2using' pitchMethod{pitchMethodNr} '_median'])(windowNr)=median(currWindowSubharmonicsAmps(1,:)-currWindowSubharmonicsAmps(2,:));
+                                        % Unit
+                                        app.calculationResults.channelResults(channelNr).(['S1S2using' pitchMethod{pitchMethodNr} '_mean_Unit'])='dB';
+                                        app.calculationResults.channelResults(channelNr).(['S1S2using' pitchMethod{pitchMethodNr} '_median_Unit'])='dB';
                                     end
+
                                     if size(currWindowSubharmonicsAmps,1)>2 % normally this should be the case since internally at least 4 harmonics are checked, but for the case that the harmonics frequency lies outside max(fSpectrogram), this could not be fullfilled
-                                        % S3
+                                        %% S3
                                         app.calculationResults.channelResults(channelNr).(['S3using' pitchMethod{pitchMethodNr} '_mean'])(windowNr)=mean(currWindowSubharmonicsAmps(3,:));
                                         app.calculationResults.channelResults(channelNr).(['S3using' pitchMethod{pitchMethodNr} '_median'])(windowNr)=median(currWindowSubharmonicsAmps(3,:));
-                                        % S1S3
+                                        % Unit
+                                        app.calculationResults.channelResults(channelNr).(['S3using' pitchMethod{pitchMethodNr} '_mean_Unit'])='dB';
+                                        app.calculationResults.channelResults(channelNr).(['S3using' pitchMethod{pitchMethodNr} '_median_Unit'])='dB';
+
+                                        %% S1S3
                                         app.calculationResults.channelResults(channelNr).(['S1S3using' pitchMethod{pitchMethodNr} '_mean'])(windowNr)=mean(currWindowSubharmonicsAmps(1,:)-currWindowSubharmonicsAmps(3,:));
                                         app.calculationResults.channelResults(channelNr).(['S1S3using' pitchMethod{pitchMethodNr} '_median'])(windowNr)=median(currWindowSubharmonicsAmps(1,:)-currWindowSubharmonicsAmps(3,:));
-                                        % S2S3
+                                        % Unit
+                                        app.calculationResults.channelResults(channelNr).(['S1S3using' pitchMethod{pitchMethodNr} '_mean_Unit'])='dB';
+                                        app.calculationResults.channelResults(channelNr).(['S1S3using' pitchMethod{pitchMethodNr} '_median_Unit'])='dB';
+
+                                        %% S2S3
                                         app.calculationResults.channelResults(channelNr).(['S2S3using' pitchMethod{pitchMethodNr} '_mean'])(windowNr)=mean(currWindowSubharmonicsAmps(2,:)-currWindowSubharmonicsAmps(3,:));
                                         app.calculationResults.channelResults(channelNr).(['S2S3using' pitchMethod{pitchMethodNr} '_median'])(windowNr)=median(currWindowSubharmonicsAmps(2,:)-currWindowSubharmonicsAmps(3,:));
-
+                                        % Unit
+                                        app.calculationResults.channelResults(channelNr).(['S2S3using' pitchMethod{pitchMethodNr} '_mean_Unit'])='dB';
+                                        app.calculationResults.channelResults(channelNr).(['S2S3using' pitchMethod{pitchMethodNr} '_median_Unit'])='dB';
                                     end
+
                                     if size(currWindowSubharmonicsAmps,1)>3 % normally this should be the case since internally at least 4 harmonics are checked, but for the case that the harmonics frequency lies outside max(fSpectrogram), this could not be fullfilled
-                                        % S4
-                                        app.calculationResults.channelResults(channelNr).(['S3using' pitchMethod{pitchMethodNr} '_mean'])(windowNr)=mean(currWindowSubharmonicsAmps(4,:));
-                                        app.calculationResults.channelResults(channelNr).(['S3using' pitchMethod{pitchMethodNr} '_median'])(windowNr)=median(currWindowSubharmonicsAmps(4,:));
-                                        % S1S4
+                                        %% S4
+                                        app.calculationResults.channelResults(channelNr).(['S4using' pitchMethod{pitchMethodNr} '_mean'])(windowNr)=mean(currWindowSubharmonicsAmps(4,:));
+                                        app.calculationResults.channelResults(channelNr).(['S4using' pitchMethod{pitchMethodNr} '_median'])(windowNr)=median(currWindowSubharmonicsAmps(4,:));
+                                        % Unit
+                                        app.calculationResults.channelResults(channelNr).(['S4using' pitchMethod{pitchMethodNr} '_mean_Unit'])='dB';
+                                        app.calculationResults.channelResults(channelNr).(['S4using' pitchMethod{pitchMethodNr} '_median_Unit'])='dB';
+
+                                        %% S1S4
                                         app.calculationResults.channelResults(channelNr).(['S1S4using' pitchMethod{pitchMethodNr} '_mean'])(windowNr)=mean(currWindowSubharmonicsAmps(1,:)-currWindowSubharmonicsAmps(4,:));
                                         app.calculationResults.channelResults(channelNr).(['S1S4using' pitchMethod{pitchMethodNr} '_median'])(windowNr)=median(currWindowSubharmonicsAmps(1,:)-currWindowSubharmonicsAmps(4,:));
-                                        % S2S4
+                                        % Unit
+                                        app.calculationResults.channelResults(channelNr).(['S1S4using' pitchMethod{pitchMethodNr} '_mean_Unit'])='dB';
+                                        app.calculationResults.channelResults(channelNr).(['S1S4using' pitchMethod{pitchMethodNr} '_median_Unit'])='dB';
+
+                                        %% S2S4
                                         app.calculationResults.channelResults(channelNr).(['S2S4using' pitchMethod{pitchMethodNr} '_mean'])(windowNr)=mean(currWindowSubharmonicsAmps(2,:)-currWindowSubharmonicsAmps(4,:));
                                         app.calculationResults.channelResults(channelNr).(['S2S4using' pitchMethod{pitchMethodNr} '_median'])(windowNr)=median(currWindowSubharmonicsAmps(2,:)-currWindowSubharmonicsAmps(4,:));
-                                        % S3S4
+                                        % Unit
+                                        app.calculationResults.channelResults(channelNr).(['S2S4using' pitchMethod{pitchMethodNr} '_mean_Unit'])='dB';
+                                        app.calculationResults.channelResults(channelNr).(['S2S4using' pitchMethod{pitchMethodNr} '_median_Unit'])='dB';
+
+                                        %% S3S4
                                         app.calculationResults.channelResults(channelNr).(['S3S4using' pitchMethod{pitchMethodNr} '_mean'])(windowNr)=mean(currWindowSubharmonicsAmps(3,:)-currWindowSubharmonicsAmps(4,:));
                                         app.calculationResults.channelResults(channelNr).(['S3S4using' pitchMethod{pitchMethodNr} '_median'])(windowNr)=median(currWindowSubharmonicsAmps(3,:)-currWindowSubharmonicsAmps(4,:));
+                                        % Unit
+                                        app.calculationResults.channelResults(channelNr).(['S3S4using' pitchMethod{pitchMethodNr} '_mean_Unit'])='dB';
+                                        app.calculationResults.channelResults(channelNr).(['S3S4using' pitchMethod{pitchMethodNr} '_median_Unit'])='dB';
                                     end
                                     
 
@@ -16072,7 +16301,7 @@ classdef Vocaliscope < matlab.apps.AppBase
                     cppExp1LAR=nan(1,numel(startTimes));
                     cppExp1bisquare=nan(1,numel(startTimes));
 
-
+                    app.createPoolIfNonexistent();
                     parfor windowNr=1:numel(startTimes)
                         currWindowYData=currYDataExcerpt(currXDataExcerpt >= startTimes(windowNr) & ...
                             currXDataExcerpt <= endTimes(windowNr));
@@ -16212,6 +16441,7 @@ classdef Vocaliscope < matlab.apps.AppBase
                     sampEnDistanceStdThreshold=app.calculationSettings.SampleEntropyTime.distanceSTDthreshold;
                     sampleEntropyTimeDomain=nan(1,numel(startTimes));
 
+                    app.createPoolIfNonexistent();
                     parfor windowNr=1:numel(startTimes)
                         currWindowYDataForSampleEntropyTime=currYDataForSampleEntropyTime(currXDataExcerpt >= startTimes(windowNr) & ...
                             currXDataExcerpt <= endTimes(windowNr));
@@ -16416,7 +16646,7 @@ classdef Vocaliscope < matlab.apps.AppBase
             parameterNames=fieldnames(app.calculationResults.channelResults);
 
             parameterNames(contains(parameterNames,{'curr'},"IgnoreCase",true))=[];
-            parameterNames(ismember(parameterNames,{'cycleBorderVals' 'cycleDurations' 'allOQBorders' 'allClQBorders'}))=[];
+            parameterNames(ismember(parameterNames,{'cycleBorderVals' 'cycleDurations' 'allOQBorders' 'allClQBorders' 'allOQBordersRel' 'allClQBordersRel'}))=[];
             parameterNames(contains(parameterNames,'_Unit'))=[];
 
             TableHeader={'Parameter','Parameter Unit','Median','Mean','STD','Min','Max'};
@@ -17403,6 +17633,24 @@ classdef Vocaliscope < matlab.apps.AppBase
             catch
             end
         end
+        
+        function createPoolIfNonexistent(app,showGUI)
+            if nargin<2
+                showGUI=1;
+            end
+            if isempty(gcp("nocreate"))
+                if showGUI
+                    progDialog=uiprogressdlg(app.UIFigure,'Title','Starting up....',...
+                    'Message','Preparing parallel computing...','Indeterminate','on');
+                end
+
+                parpool("Processes",[1 min(4,feature('numcores'))],"IdleTimeout",12*60);
+
+                if showGUI
+                    delete(progDialog);
+                end
+            end
+        end
     end
 
 
@@ -17470,8 +17718,6 @@ classdef Vocaliscope < matlab.apps.AppBase
                 app.UIFigure.Name=['Vocaliscope V' app.currentAppVersion ' (running from mlapp)'];
             end
 
-            progDialog.Message='Preparing parallel computing...';
-            app.createPoolIfNonexistent();
             delete(progDialog);
 
             %%% download praat % not needed anymore since we integrated praat via the
@@ -18198,7 +18444,7 @@ classdef Vocaliscope < matlab.apps.AppBase
             if ~isempty(debounceTimer) && isvalid(debounceTimer)
                 stop(debounceTimer);
             else
-                debounceTimer=timer("ExecutionMode","singleShot",'StartDelay',0.5,'TimerFcn',@(~,~) set(app.tlTime,'OuterPosition',[0 0 1 1]));
+                debounceTimer=timer("ExecutionMode","singleShot",'StartDelay',0.5,'TimerFcn',@(~,~) set([app.tlTime app.tlSpectral],'OuterPosition',[0 0 1 1]));
             end
 
 
@@ -19206,6 +19452,7 @@ classdef Vocaliscope < matlab.apps.AppBase
 
             % Create savechanneldatatoxlsxCheckBox
             app.savechanneldatatoxlsxCheckBox = uicheckbox(app.GridLayout);
+            app.savechanneldatatoxlsxCheckBox.Tooltip = {'If checked, the channels data is also saved to the reulst xlsx sheet. WARNING: this makes saving much slower'};
             app.savechanneldatatoxlsxCheckBox.Text = 'save channel data to xlsx';
             app.savechanneldatatoxlsxCheckBox.WordWrap = 'on';
             app.savechanneldatatoxlsxCheckBox.Layout.Row = 1;
@@ -19540,6 +19787,7 @@ classdef Vocaliscope < matlab.apps.AppBase
             app.showngraphswithoutscrollingDropDown = uidropdown(app.GridLayout);
             app.showngraphswithoutscrollingDropDown.Items = {'1', '2', '3', '4', '5', '6', '7', '8'};
             app.showngraphswithoutscrollingDropDown.ValueChangedFcn = createCallbackFcn(app, @changeNumberOfGraphsWithoutScrolling, true);
+            app.showngraphswithoutscrollingDropDown.Enable = 'off';
             app.showngraphswithoutscrollingDropDown.Layout.Row = 18;
             app.showngraphswithoutscrollingDropDown.Layout.Column = [11 14];
             app.showngraphswithoutscrollingDropDown.Value = '4';

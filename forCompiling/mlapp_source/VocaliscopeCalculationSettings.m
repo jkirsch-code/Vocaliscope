@@ -131,27 +131,28 @@ classdef VocaliscopeCalculationSettings < matlab.apps.AppBase
         upperFoPredictionAlgorithmDropdown  matlab.ui.control.DropDown
         useUpperFoPredictionStateButton  matlab.ui.control.StateButton
         ChosenChannelEditField          matlab.ui.control.NumericEditField
-        WindowOverlapmsEditField        matlab.ui.control.NumericEditField
-        WindowOverlapmsEditFieldLabel   matlab.ui.control.Label
-        minimumcycledurationmsEditField  matlab.ui.control.NumericEditField
+        WindowOverlapEditField          matlab.ui.control.NumericEditField
+        WindowOverlapEditFieldLabel     matlab.ui.control.Label
+        minimumcycledurationEditField   matlab.ui.control.NumericEditField
         minimumcycledurationmsEditFieldLabel  matlab.ui.control.Label
         maximumfoHzEditField            matlab.ui.control.NumericEditField
-        maximumifisubosubHzEditFieldLabel  matlab.ui.control.Label
+        maximumifisubosubLabel          matlab.ui.control.Label
         channelusedasmaskLabel          matlab.ui.control.Label
-        WindowLengthmsEditField         matlab.ui.control.NumericEditField
-        WindowLengthmsEditFieldLabel    matlab.ui.control.Label
-        maximumcycledurationmsEditField  matlab.ui.control.NumericEditField
+        WindowLengthEditField           matlab.ui.control.NumericEditField
+        WindowLengthEditFieldLabel      matlab.ui.control.Label
+        maximumcycledurationEditField   matlab.ui.control.NumericEditField
         maximumcycledurationmsEditFieldLabel  matlab.ui.control.Label
         minimumfoHzEditField            matlab.ui.control.NumericEditField
-        minimumifisubosubHzEditFieldLabel  matlab.ui.control.Label
+        minimumifisubosubLabel          matlab.ui.control.Label
         UsemaskCheckBox                 matlab.ui.control.CheckBox
         WindowedAnalysisCheckBox        matlab.ui.control.CheckBox
         ifisubosubandcycledurationrangeLabel  matlab.ui.control.Label
         CyclesTab                       matlab.ui.container.Tab
         GridLayout3                     matlab.ui.container.GridLayout
+        showRelativeGAWphaseBorders     matlab.ui.control.CheckBox
         relativepeakprominenceinreferencetowindowmaximumEditField  matlab.ui.control.NumericEditField
         relativepeakprominenceinreferencetowindowmaximumEditFieldLabel  matlab.ui.control.Label
-        absoluitepeakprominenceEditFieldLabel  matlab.ui.control.Label
+        absolutepeakprominenceLabel     matlab.ui.control.Label
         absoluitepeakprominenceEditField  matlab.ui.control.NumericEditField
         CyclePeakProminenceTypeSwitch   matlab.ui.control.Switch
         GAWopenthresholdinoflocalmaximumEditField  matlab.ui.control.NumericEditField
@@ -319,7 +320,7 @@ classdef VocaliscopeCalculationSettings < matlab.apps.AppBase
 
             txtFilterEditField.ValueChangingFcn = @(~, event) filterTreeNodes(checkboxUItree,event.Value);
 
-            checkboxUItree.CheckedNodesChangedFcn=@(src,evt)keepTrackOfCheckedNotes(app,src,evt);
+            checkboxUItree.CheckedNodesChangedFcn=@(src,evt)keepTrackOfCheckedNodes(app,src,evt);
 
             function filterTreeNodes(tree,filterText)
                 filterText = strtrim(filterText);
@@ -377,7 +378,7 @@ classdef VocaliscopeCalculationSettings < matlab.apps.AppBase
                 end
             end
         
-            function keepTrackOfCheckedNotes(app,src,~)
+            function keepTrackOfCheckedNodes(app,src,~)
                 
                 comingFromMainNode=ismember(src.SelectedNodes,mainNodes);
         
@@ -409,7 +410,7 @@ classdef VocaliscopeCalculationSettings < matlab.apps.AppBase
             %
          
             fs = app.ResamplingFrequencyHzEditField.Value;
-            signal_duration = app.WindowLengthmsEditField.Limits(2)/1000;  % Current signal
+            signal_duration = app.WindowLengthEditField.Limits(2)/1000;  % Current signal
 
             % Exact minima (fs-dependent)
             MIN_WINDOW   = 256 / fs;        % FFT minimum
@@ -542,17 +543,17 @@ classdef VocaliscopeCalculationSettings < matlab.apps.AppBase
             end
             
             if app.WindowedAnalysisCheckBox.Value==1 % we want windowed mode
-                app.PitchanalysistimewindowSlider.Limits(2)=floor(app.WindowLengthmsEditField.Value);
-                app.pitchAnalysisTimeLengthEditField.Limits(2)=floor(app.WindowLengthmsEditField.Value);
-            elseif ~isinf(app.WindowLengthmsEditField.Limits(2))
-                app.PitchanalysistimewindowSlider.Limits(2)=floor(app.WindowLengthmsEditField.Limits(2));
-                app.pitchAnalysisTimeLengthEditField.Limits(2)=floor(app.WindowLengthmsEditField.Limits(2));
+                app.PitchanalysistimewindowSlider.Limits(2)=floor(app.WindowLengthEditField.Value);
+                app.pitchAnalysisTimeLengthEditField.Limits(2)=floor(app.WindowLengthEditField.Value);
+            elseif ~isinf(app.WindowLengthEditField.Limits(2))
+                app.PitchanalysistimewindowSlider.Limits(2)=floor(app.WindowLengthEditField.Limits(2));
+                app.pitchAnalysisTimeLengthEditField.Limits(2)=floor(app.WindowLengthEditField.Limits(2));
             end
-            %app.pitchAnalysisTimeLengthEditField.Value=app.WindowLengthmsEditField.Value;
+            %app.pitchAnalysisTimeLengthEditField.Value=app.WindowLengthEditField.Value;
 
             app.PitchanalysistimewindowoverlapSlider.Limits(2)=app.PitchanalysistimewindowSlider.Value-1;
             app.PitchAnalysisWindowOverlapEditField.Limits(2)=app.PitchanalysistimewindowSlider.Value-1;
-            %app.PitchAnalysisWindowOverlapEditField.Value=app.WindowLengthmsEditField.Value-1;
+            %app.PitchAnalysisWindowOverlapEditField.Value=app.WindowLengthEditField.Value-1;
 
             if app.useUpperFoPredictionStateButton.Value==1
                 app.useUpperFoPredictionStateButton.BackgroundColor=[0.29,0.86,0.25];
@@ -580,19 +581,19 @@ classdef VocaliscopeCalculationSettings < matlab.apps.AppBase
 
         
         function setMaximumWindowLength(app,val)
-            if val*1000<=app.WindowOverlapmsEditField.Value
-                app.WindowOverlapmsEditField.Value=val*1000-1;
+            if val*1000<=app.WindowOverlapEditField.Value
+                app.WindowOverlapEditField.Value=val*1000-1;
             end
 
-            app.WindowLengthmsEditField.Limits(2)=val*1000;
-            app.WindowOverlapmsEditField.Limits(2)=val*1000-1;
+            app.WindowLengthEditField.Limits(2)=val*1000;
+            app.WindowOverlapEditField.Limits(2)=val*1000-1;
 
-            if app.WindowedAnalysisCheckBox==1 % we want windowed mode
-                app.PitchanalysistimewindowSlider.Limits(2)=floor(app.WindowLengthmsEditField.Value);
-                app.pitchAnalysisTimeLengthEditField.Limits(2)=floor(app.WindowLengthmsEditField.Value);
+            if app.WindowedAnalysisCheckBox.Value==1 % we want windowed mode
+                app.PitchanalysistimewindowSlider.Limits(2)=floor(app.WindowLengthEditField.Value);
+                app.pitchAnalysisTimeLengthEditField.Limits(2)=floor(app.WindowLengthEditField.Value);
             else
-                app.PitchanalysistimewindowSlider.Limits(2)=floor(app.WindowLengthmsEditField.Limits(2));
-                app.pitchAnalysisTimeLengthEditField.Limits(2)=floor(app.WindowLengthmsEditField.Limits(2));
+                app.PitchanalysistimewindowSlider.Limits(2)=floor(app.WindowLengthEditField.Limits(2));
+                app.pitchAnalysisTimeLengthEditField.Limits(2)=floor(app.WindowLengthEditField.Limits(2));
             end
 
             app.update_cpp_limits();
@@ -630,9 +631,10 @@ classdef VocaliscopeCalculationSettings < matlab.apps.AppBase
             app.outputSettings.useWindows=app.WindowedAnalysisCheckBox.Value;
             app.outputSettings.useMask=app.UsemaskCheckBox.Value;
             app.outputSettings.maskChannelNumber=app.ChosenChannelEditField.Value;
-            app.outputSettings.windowLength=app.WindowLengthmsEditField.Value/1000; % to s
-            app.outputSettings.windowOverlap=app.WindowOverlapmsEditField.Value/1000; % to s
-            app.outputSettings.windowHopLength=(app.WindowLengthmsEditField.Value-app.WindowOverlapmsEditField.Value)/1000;
+            app.outputSettings.windowLength=app.WindowLengthEditField.Value/1000; % to s
+            app.outputSettings.windowOverlap=app.WindowOverlapEditField.Value/1000; % to s
+            app.outputSettings.windowHopLength=(app.WindowLengthEditField.Value-app.WindowOverlapEditField.Value)/1000;
+            
 
             app.outputSettings.fo.Min=app.minimumfoHzEditField.Value;
             app.outputSettings.fo.Max=app.maximumfoHzEditField.Value;
@@ -660,9 +662,10 @@ classdef VocaliscopeCalculationSettings < matlab.apps.AppBase
             app.outputSettings.subharmonics.percentageThreshold = app.MinimumsubharmonicfouriercoefficientvalueEditField.Value/100;
             app.outputSettings.subharmonics.doCalculate = app.MinimumSubharmonicHzNode.UserData.Checked;
 
-            app.outputSettings.cycleDuration.Min=app.minimumcycledurationmsEditField.Value/1000;
-            app.outputSettings.cycleDuration.Max=app.maximumcycledurationmsEditField.Value/1000;
+            app.outputSettings.cycleDuration.Min=app.minimumcycledurationEditField.Value/1000;
+            app.outputSettings.cycleDuration.Max=app.maximumcycledurationEditField.Value/1000;
             app.outputSettings.cycleDuration.showSeparate1overCycleDurationPlot=app.showseparateplotof1cycledurationCheckBox.Value;
+            app.outputSettings.cycleDuration.showRelativeGAWphaseThresholds=app.showRelativeGAWphaseBorders.Value;
 
             app.outputSettings.plateauQuotientThreshold=app.PlateauQuotientThresholdEditField.Value/100;
             app.outputSettings.GAWopenThresholdPercentage=app.GAWopenthresholdinoflocalmaximumEditField.Value/100;
@@ -861,12 +864,12 @@ classdef VocaliscopeCalculationSettings < matlab.apps.AppBase
 
             if value>app.maximumfoHzEditField.Value
                 app.maximumfoHzEditField.Value=value;
-                app.minimumcycledurationmsEditField.Value=1/value*1000;
+                app.minimumcycledurationEditField.Value=1/value*1000;
             end
 
             calcval=1/value*1000;
-            if calcval~=app.maximumcycledurationmsEditField.Value
-                app.maximumcycledurationmsEditField.Value=calcval;
+            if calcval~=app.maximumcycledurationEditField.Value
+                app.maximumcycledurationEditField.Value=calcval;
             end
         end
 
@@ -876,23 +879,23 @@ classdef VocaliscopeCalculationSettings < matlab.apps.AppBase
 
             if value<app.minimumfoHzEditField.Value
                 app.minimumfoHzEditField.Value=value;
-                app.maximumcycledurationmsEditField.Value=1/value*1000;
+                app.maximumcycledurationEditField.Value=1/value*1000;
             end
 
             calcval=1/value*1000;
-            if calcval~=app.minimumcycledurationmsEditField.Value
-                app.minimumcycledurationmsEditField.Value=calcval;
+            if calcval~=app.minimumcycledurationEditField.Value
+                app.minimumcycledurationEditField.Value=calcval;
             end
 
             app.LowerQuefrencyLimitsEditField.Limits(2)=1/value;
         end
 
-        % Value changed function: maximumcycledurationmsEditField
-        function maximumcycledurationmsEditFieldValueChanged(app, event)
-            value = app.maximumcycledurationmsEditField.Value;
+        % Value changed function: maximumcycledurationEditField
+        function maximumcycledurationEditFieldValueChanged(app, event)
+            value = app.maximumcycledurationEditField.Value;
 
-            if value<app.minimumcycledurationmsEditField.Value
-                app.minimumcycledurationmsEditField.Value=value;
+            if value<app.minimumcycledurationEditField.Value
+                app.minimumcycledurationEditField.Value=value;
                 app.maximumfoHzEditField.Value=1/(value/1000);
             end
             
@@ -902,12 +905,12 @@ classdef VocaliscopeCalculationSettings < matlab.apps.AppBase
             end
         end
 
-        % Value changed function: minimumcycledurationmsEditField
-        function minimumcycledurationmsEditFieldValueChanged(app, event)
-            value = app.minimumcycledurationmsEditField.Value;
+        % Value changed function: minimumcycledurationEditField
+        function minimumcycledurationEditFieldValueChanged(app, event)
+            value = app.minimumcycledurationEditField.Value;
 
-            if value>app.maximumcycledurationmsEditField.Value
-                app.maximumcycledurationmsEditField.Value=value;
+            if value>app.maximumcycledurationEditField.Value
+                app.maximumcycledurationEditField.Value=value;
                 app.minimumfoHzEditField.Value=1/(value/1000);
             end
             
@@ -987,21 +990,21 @@ classdef VocaliscopeCalculationSettings < matlab.apps.AppBase
             app.CycleDurationmsNode.UserData.Checked=true;
         end
 
-        % Value changed function: WindowLengthmsEditField
-        function WindowLengthmsEditFieldValueChanged(app, event)
-            value = app.WindowLengthmsEditField.Value;
-            if app.WindowOverlapmsEditField.Value>=value
-                app.WindowOverlapmsEditField.Value=value-1;
+        % Value changed function: WindowLengthEditField
+        function WindowLengthEditFieldValueChanged(app, event)
+            value = app.WindowLengthEditField.Value;
+            if app.WindowOverlapEditField.Value>=value
+                app.WindowOverlapEditField.Value=value-1;
             end
 
-            app.PitchanalysistimewindowSlider.Limits(2)=app.WindowLengthmsEditField.Value;
+            app.PitchanalysistimewindowSlider.Limits(2)=app.WindowLengthEditField.Value;
         end
 
         % Value changed function: WindowedAnalysisCheckBox
         function WindowedAnalysisCheckBoxValueChanged(app, event)
             value = app.WindowedAnalysisCheckBox.Value;
             
-            set([app.WindowLengthmsEditField app.WindowOverlapmsEditField app.WindowLengthmsEditFieldLabel app.WindowOverlapmsEditFieldLabel],'Enable',value);
+            set([app.WindowLengthEditField app.WindowOverlapEditField app.WindowLengthEditFieldLabel app.WindowOverlapEditFieldLabel],'Enable',value);
 
             if value==1
                 app.UsemaskCheckBox.Value=0;
@@ -1011,11 +1014,11 @@ classdef VocaliscopeCalculationSettings < matlab.apps.AppBase
 
             % setting the pitch window size limits
             if value==1 % we want windowed mode
-                app.PitchanalysistimewindowSlider.Limits(2)=floor(app.WindowLengthmsEditField.Value);
-                app.pitchAnalysisTimeLengthEditField.Limits(2)=floor(app.WindowLengthmsEditField.Value);
-            elseif ~isinf(app.WindowLengthmsEditField.Limits(2))
-                app.PitchanalysistimewindowSlider.Limits(2)=floor(app.WindowLengthmsEditField.Limits(2));
-                app.pitchAnalysisTimeLengthEditField.Limits(2)=floor(app.WindowLengthmsEditField.Limits(2));
+                app.PitchanalysistimewindowSlider.Limits(2)=floor(app.WindowLengthEditField.Value);
+                app.pitchAnalysisTimeLengthEditField.Limits(2)=floor(app.WindowLengthEditField.Value);
+            elseif ~isinf(app.WindowLengthEditField.Limits(2))
+                app.PitchanalysistimewindowSlider.Limits(2)=floor(app.WindowLengthEditField.Limits(2));
+                app.pitchAnalysisTimeLengthEditField.Limits(2)=floor(app.WindowLengthEditField.Limits(2));
             end
             
         end
@@ -1045,13 +1048,13 @@ classdef VocaliscopeCalculationSettings < matlab.apps.AppBase
             app.collectSettings();
         end
 
-        % Value changed function: WindowOverlapmsEditField
-        function WindowOverlapmsEditFieldValueChanged(app, event)
-            value = app.WindowOverlapmsEditField.Value;
+        % Value changed function: WindowOverlapEditField
+        function WindowOverlapEditFieldValueChanged(app, event)
+            value = app.WindowOverlapEditField.Value;
 
             
-            if value>=app.WindowLengthmsEditField.Value
-                app.WindowLengthmsEditField.Value=value+1;
+            if value>=app.WindowLengthEditField.Value
+                app.WindowLengthEditField.Value=value+1;
             end
         end
 
@@ -1092,12 +1095,12 @@ classdef VocaliscopeCalculationSettings < matlab.apps.AppBase
             
             if value
                 app.absoluitepeakprominenceEditField.Enable="on";
-                app.absoluitepeakprominenceEditFieldLabel.Enable='on';
+                app.absolutepeakprominenceLabel.Enable='on';
                 app.relativepeakprominenceinreferencetowindowmaximumEditField.Enable='off';
                 app.relativepeakprominenceinreferencetowindowmaximumEditFieldLabel.Enable='off';
             else
                 app.absoluitepeakprominenceEditField.Enable="off";
-                app.absoluitepeakprominenceEditFieldLabel.Enable='off';
+                app.absolutepeakprominenceLabel.Enable='off';
                 app.relativepeakprominenceinreferencetowindowmaximumEditField.Enable='on';
                 app.relativepeakprominenceinreferencetowindowmaximumEditFieldLabel.Enable='on';
             end
@@ -1125,7 +1128,7 @@ classdef VocaliscopeCalculationSettings < matlab.apps.AppBase
         function UsemaskCheckBoxValueChanged(app, event)
             value = app.UsemaskCheckBox.Value;
             
-            set([app.WindowLengthmsEditField app.WindowOverlapmsEditField app.WindowLengthmsEditFieldLabel app.WindowOverlapmsEditFieldLabel],'Enable','off');
+            set([app.WindowLengthEditField app.WindowOverlapEditField app.WindowLengthEditFieldLabel app.WindowOverlapEditFieldLabel],'Enable','off');
 
             if value==1
                 app.WindowedAnalysisCheckBox.Value=0;
@@ -1278,18 +1281,19 @@ classdef VocaliscopeCalculationSettings < matlab.apps.AppBase
             app.UsemaskCheckBox.Layout.Row = 1;
             app.UsemaskCheckBox.Layout.Column = 8;
 
-            % Create minimumifisubosubHzEditFieldLabel
-            app.minimumifisubosubHzEditFieldLabel = uilabel(app.GridLayout2);
-            app.minimumifisubosubHzEditFieldLabel.HorizontalAlignment = 'right';
-            app.minimumifisubosubHzEditFieldLabel.WordWrap = 'on';
-            app.minimumifisubosubHzEditFieldLabel.Layout.Row = 2;
-            app.minimumifisubosubHzEditFieldLabel.Layout.Column = 1;
-            app.minimumifisubosubHzEditFieldLabel.Interpreter = 'html';
-            app.minimumifisubosubHzEditFieldLabel.Text = 'minimum <i>f</i><sub>o</sub> (Hz)';
+            % Create minimumifisubosubLabel
+            app.minimumifisubosubLabel = uilabel(app.GridLayout2);
+            app.minimumifisubosubLabel.HorizontalAlignment = 'right';
+            app.minimumifisubosubLabel.WordWrap = 'on';
+            app.minimumifisubosubLabel.Layout.Row = 2;
+            app.minimumifisubosubLabel.Layout.Column = 1;
+            app.minimumifisubosubLabel.Interpreter = 'html';
+            app.minimumifisubosubLabel.Text = 'minimum <i>f</i><sub>o</sub>: ';
 
             % Create minimumfoHzEditField
             app.minimumfoHzEditField = uieditfield(app.GridLayout2, 'numeric');
             app.minimumfoHzEditField.Limits = [0 Inf];
+            app.minimumfoHzEditField.ValueDisplayFormat = '%11.4g Hz';
             app.minimumfoHzEditField.ValueChangedFcn = createCallbackFcn(app, @minimumfoHzEditFieldValueChanged, true);
             app.minimumfoHzEditField.Layout.Row = 2;
             app.minimumfoHzEditField.Layout.Column = 2;
@@ -1301,31 +1305,33 @@ classdef VocaliscopeCalculationSettings < matlab.apps.AppBase
             app.maximumcycledurationmsEditFieldLabel.WordWrap = 'on';
             app.maximumcycledurationmsEditFieldLabel.Layout.Row = 2;
             app.maximumcycledurationmsEditFieldLabel.Layout.Column = 3;
-            app.maximumcycledurationmsEditFieldLabel.Text = 'maximum cycle duration (ms)';
+            app.maximumcycledurationmsEditFieldLabel.Text = 'maximum cycle duration:';
 
-            % Create maximumcycledurationmsEditField
-            app.maximumcycledurationmsEditField = uieditfield(app.GridLayout2, 'numeric');
-            app.maximumcycledurationmsEditField.Limits = [0 Inf];
-            app.maximumcycledurationmsEditField.ValueChangedFcn = createCallbackFcn(app, @maximumcycledurationmsEditFieldValueChanged, true);
-            app.maximumcycledurationmsEditField.Layout.Row = 2;
-            app.maximumcycledurationmsEditField.Layout.Column = 4;
-            app.maximumcycledurationmsEditField.Value = 20;
+            % Create maximumcycledurationEditField
+            app.maximumcycledurationEditField = uieditfield(app.GridLayout2, 'numeric');
+            app.maximumcycledurationEditField.Limits = [0 Inf];
+            app.maximumcycledurationEditField.ValueDisplayFormat = '%11.4g ms';
+            app.maximumcycledurationEditField.ValueChangedFcn = createCallbackFcn(app, @maximumcycledurationEditFieldValueChanged, true);
+            app.maximumcycledurationEditField.Layout.Row = 2;
+            app.maximumcycledurationEditField.Layout.Column = 4;
+            app.maximumcycledurationEditField.Value = 20;
 
-            % Create WindowLengthmsEditFieldLabel
-            app.WindowLengthmsEditFieldLabel = uilabel(app.GridLayout2);
-            app.WindowLengthmsEditFieldLabel.HorizontalAlignment = 'center';
-            app.WindowLengthmsEditFieldLabel.WordWrap = 'on';
-            app.WindowLengthmsEditFieldLabel.Layout.Row = 2;
-            app.WindowLengthmsEditFieldLabel.Layout.Column = 6;
-            app.WindowLengthmsEditFieldLabel.Text = 'Window Length (ms)';
+            % Create WindowLengthEditFieldLabel
+            app.WindowLengthEditFieldLabel = uilabel(app.GridLayout2);
+            app.WindowLengthEditFieldLabel.HorizontalAlignment = 'center';
+            app.WindowLengthEditFieldLabel.WordWrap = 'on';
+            app.WindowLengthEditFieldLabel.Layout.Row = 2;
+            app.WindowLengthEditFieldLabel.Layout.Column = 6;
+            app.WindowLengthEditFieldLabel.Text = 'Window Length';
 
-            % Create WindowLengthmsEditField
-            app.WindowLengthmsEditField = uieditfield(app.GridLayout2, 'numeric');
-            app.WindowLengthmsEditField.Limits = [1 Inf];
-            app.WindowLengthmsEditField.ValueChangedFcn = createCallbackFcn(app, @WindowLengthmsEditFieldValueChanged, true);
-            app.WindowLengthmsEditField.Layout.Row = 2;
-            app.WindowLengthmsEditField.Layout.Column = 7;
-            app.WindowLengthmsEditField.Value = 100;
+            % Create WindowLengthEditField
+            app.WindowLengthEditField = uieditfield(app.GridLayout2, 'numeric');
+            app.WindowLengthEditField.Limits = [1 Inf];
+            app.WindowLengthEditField.ValueDisplayFormat = '%11.4g ms';
+            app.WindowLengthEditField.ValueChangedFcn = createCallbackFcn(app, @WindowLengthEditFieldValueChanged, true);
+            app.WindowLengthEditField.Layout.Row = 2;
+            app.WindowLengthEditField.Layout.Column = 7;
+            app.WindowLengthEditField.Value = 100;
 
             % Create channelusedasmaskLabel
             app.channelusedasmaskLabel = uilabel(app.GridLayout2);
@@ -1335,18 +1341,19 @@ classdef VocaliscopeCalculationSettings < matlab.apps.AppBase
             app.channelusedasmaskLabel.Layout.Column = 8;
             app.channelusedasmaskLabel.Text = 'channel used as mask:';
 
-            % Create maximumifisubosubHzEditFieldLabel
-            app.maximumifisubosubHzEditFieldLabel = uilabel(app.GridLayout2);
-            app.maximumifisubosubHzEditFieldLabel.HorizontalAlignment = 'right';
-            app.maximumifisubosubHzEditFieldLabel.WordWrap = 'on';
-            app.maximumifisubosubHzEditFieldLabel.Layout.Row = 3;
-            app.maximumifisubosubHzEditFieldLabel.Layout.Column = 1;
-            app.maximumifisubosubHzEditFieldLabel.Interpreter = 'html';
-            app.maximumifisubosubHzEditFieldLabel.Text = 'maximum <i>f</i><sub>o</sub> (Hz)';
+            % Create maximumifisubosubLabel
+            app.maximumifisubosubLabel = uilabel(app.GridLayout2);
+            app.maximumifisubosubLabel.HorizontalAlignment = 'right';
+            app.maximumifisubosubLabel.WordWrap = 'on';
+            app.maximumifisubosubLabel.Layout.Row = 3;
+            app.maximumifisubosubLabel.Layout.Column = 1;
+            app.maximumifisubosubLabel.Interpreter = 'html';
+            app.maximumifisubosubLabel.Text = 'maximum <i>f</i><sub>o</sub>: ';
 
             % Create maximumfoHzEditField
             app.maximumfoHzEditField = uieditfield(app.GridLayout2, 'numeric');
             app.maximumfoHzEditField.Limits = [0 Inf];
+            app.maximumfoHzEditField.ValueDisplayFormat = '%11.4g Hz';
             app.maximumfoHzEditField.ValueChangedFcn = createCallbackFcn(app, @maximumfoHzEditFieldValueChanged, true);
             app.maximumfoHzEditField.Layout.Row = 3;
             app.maximumfoHzEditField.Layout.Column = 2;
@@ -1358,31 +1365,33 @@ classdef VocaliscopeCalculationSettings < matlab.apps.AppBase
             app.minimumcycledurationmsEditFieldLabel.WordWrap = 'on';
             app.minimumcycledurationmsEditFieldLabel.Layout.Row = 3;
             app.minimumcycledurationmsEditFieldLabel.Layout.Column = 3;
-            app.minimumcycledurationmsEditFieldLabel.Text = 'minimum cycle duration (ms)';
+            app.minimumcycledurationmsEditFieldLabel.Text = 'minimum cycle duration:';
 
-            % Create minimumcycledurationmsEditField
-            app.minimumcycledurationmsEditField = uieditfield(app.GridLayout2, 'numeric');
-            app.minimumcycledurationmsEditField.Limits = [0 Inf];
-            app.minimumcycledurationmsEditField.ValueChangedFcn = createCallbackFcn(app, @minimumcycledurationmsEditFieldValueChanged, true);
-            app.minimumcycledurationmsEditField.Layout.Row = 3;
-            app.minimumcycledurationmsEditField.Layout.Column = 4;
-            app.minimumcycledurationmsEditField.Value = 4;
+            % Create minimumcycledurationEditField
+            app.minimumcycledurationEditField = uieditfield(app.GridLayout2, 'numeric');
+            app.minimumcycledurationEditField.Limits = [0 Inf];
+            app.minimumcycledurationEditField.ValueDisplayFormat = '%11.4g ms';
+            app.minimumcycledurationEditField.ValueChangedFcn = createCallbackFcn(app, @minimumcycledurationEditFieldValueChanged, true);
+            app.minimumcycledurationEditField.Layout.Row = 3;
+            app.minimumcycledurationEditField.Layout.Column = 4;
+            app.minimumcycledurationEditField.Value = 4;
 
-            % Create WindowOverlapmsEditFieldLabel
-            app.WindowOverlapmsEditFieldLabel = uilabel(app.GridLayout2);
-            app.WindowOverlapmsEditFieldLabel.HorizontalAlignment = 'center';
-            app.WindowOverlapmsEditFieldLabel.WordWrap = 'on';
-            app.WindowOverlapmsEditFieldLabel.Layout.Row = 3;
-            app.WindowOverlapmsEditFieldLabel.Layout.Column = 6;
-            app.WindowOverlapmsEditFieldLabel.Text = 'Window Overlap (ms)';
+            % Create WindowOverlapEditFieldLabel
+            app.WindowOverlapEditFieldLabel = uilabel(app.GridLayout2);
+            app.WindowOverlapEditFieldLabel.HorizontalAlignment = 'center';
+            app.WindowOverlapEditFieldLabel.WordWrap = 'on';
+            app.WindowOverlapEditFieldLabel.Layout.Row = 3;
+            app.WindowOverlapEditFieldLabel.Layout.Column = 6;
+            app.WindowOverlapEditFieldLabel.Text = 'Window Overlap';
 
-            % Create WindowOverlapmsEditField
-            app.WindowOverlapmsEditField = uieditfield(app.GridLayout2, 'numeric');
-            app.WindowOverlapmsEditField.Limits = [0 Inf];
-            app.WindowOverlapmsEditField.ValueChangedFcn = createCallbackFcn(app, @WindowOverlapmsEditFieldValueChanged, true);
-            app.WindowOverlapmsEditField.Layout.Row = 3;
-            app.WindowOverlapmsEditField.Layout.Column = 7;
-            app.WindowOverlapmsEditField.Value = 90;
+            % Create WindowOverlapEditField
+            app.WindowOverlapEditField = uieditfield(app.GridLayout2, 'numeric');
+            app.WindowOverlapEditField.Limits = [0 Inf];
+            app.WindowOverlapEditField.ValueDisplayFormat = '%11.4g ms';
+            app.WindowOverlapEditField.ValueChangedFcn = createCallbackFcn(app, @WindowOverlapEditFieldValueChanged, true);
+            app.WindowOverlapEditField.Layout.Row = 3;
+            app.WindowOverlapEditField.Layout.Column = 7;
+            app.WindowOverlapEditField.Value = 90;
 
             % Create ChosenChannelEditField
             app.ChosenChannelEditField = uieditfield(app.GridLayout2, 'numeric');
@@ -1405,8 +1414,8 @@ classdef VocaliscopeCalculationSettings < matlab.apps.AppBase
 
             % Create upperFoPredictionAlgorithmDropdown
             app.upperFoPredictionAlgorithmDropdown = uidropdown(app.GridLayout2);
-            app.upperFoPredictionAlgorithmDropdown.Items = {'Normalized Correlation Function', 'Pitch Estimation Filter', 'Cepstrum Pitch Determination', 'Log-Harmonic Summation', 'Summation of Residual Harmonics', 'SWIPE''', 'SHR'};
-            app.upperFoPredictionAlgorithmDropdown.ItemsData = {'NCF', 'PEF', 'CEP', 'LHS', 'SRH', 'SWIPE''', 'SHR'};
+            app.upperFoPredictionAlgorithmDropdown.Items = {'Normalized Correlation Function', 'Pitch Estimation Filter', 'Cepstrum Pitch Determination', 'Log-Harmonic Summation', 'Summation of Residual Harmonics', 'SWIPE'''};
+            app.upperFoPredictionAlgorithmDropdown.ItemsData = {'NCF', 'PEF', 'CEP', 'LHS', 'SRH', 'SWIPE'''};
             app.upperFoPredictionAlgorithmDropdown.Enable = 'off';
             app.upperFoPredictionAlgorithmDropdown.Tooltip = {'pitch algorithm used for pitch prediction. Further input parameters can be changed by the minimum and maximum fo in the "General" Tab and Window Size and Overlap in the "fo" Tab'};
             app.upperFoPredictionAlgorithmDropdown.Layout.Row = 4;
@@ -1439,7 +1448,7 @@ classdef VocaliscopeCalculationSettings < matlab.apps.AppBase
 
             % Create CycleDurationmsNode
             app.CycleDurationmsNode = uitreenode(app.FundamentalFrequencyMeasuresNode);
-            app.CycleDurationmsNode.Text = 'Cycle Duration (ms)';
+            app.CycleDurationmsNode.Text = 'Cycle Duration (s)';
 
             % Create MaximumHarmonicHzNode
             app.MaximumHarmonicHzNode = uitreenode(app.FundamentalFrequencyMeasuresNode);
@@ -1479,7 +1488,7 @@ classdef VocaliscopeCalculationSettings < matlab.apps.AppBase
 
             % Create MeanJittermsNode
             app.MeanJittermsNode = uitreenode(app.PeriodPerturbationMeasuresNode);
-            app.MeanJittermsNode.Text = 'Mean Jitter (ms)';
+            app.MeanJittermsNode.Text = 'Mean Jitter (s)';
 
             % Create JitterNode
             app.JitterNode = uitreenode(app.PeriodPerturbationMeasuresNode);
@@ -1727,7 +1736,7 @@ classdef VocaliscopeCalculationSettings < matlab.apps.AppBase
 
             % Create roommeansquareRMSNode
             app.roommeansquareRMSNode = uitreenode(app.BasicmeasurementsNode);
-            app.roommeansquareRMSNode.Text = 'room-mean-square RMS';
+            app.roommeansquareRMSNode.Text = 'root-mean-square RMS';
 
             % Create ModeNode
             app.ModeNode = uitreenode(app.BasicmeasurementsNode);
@@ -1947,7 +1956,7 @@ classdef VocaliscopeCalculationSettings < matlab.apps.AppBase
             app.PlateauQuotientThresholdEditField = uieditfield(app.GridLayout3, 'numeric');
             app.PlateauQuotientThresholdEditField.Limits = [1 99];
             app.PlateauQuotientThresholdEditField.RoundFractionalValues = 'on';
-            app.PlateauQuotientThresholdEditField.ValueDisplayFormat = '%i';
+            app.PlateauQuotientThresholdEditField.ValueDisplayFormat = '%i %%';
             app.PlateauQuotientThresholdEditField.Tooltip = {'For calculation of the plateau quotient:In which amount of time the data is above this threshold, e.g. at 95% how many data points are in the upper 5% of the cycles data.'};
             app.PlateauQuotientThresholdEditField.Layout.Row = 2;
             app.PlateauQuotientThresholdEditField.Layout.Column = 2;
@@ -1966,7 +1975,7 @@ classdef VocaliscopeCalculationSettings < matlab.apps.AppBase
             app.GAWopenthresholdinoflocalmaximumEditField = uieditfield(app.GridLayout3, 'numeric');
             app.GAWopenthresholdinoflocalmaximumEditField.Limits = [0 99];
             app.GAWopenthresholdinoflocalmaximumEditField.RoundFractionalValues = 'on';
-            app.GAWopenthresholdinoflocalmaximumEditField.ValueDisplayFormat = '%i';
+            app.GAWopenthresholdinoflocalmaximumEditField.ValueDisplayFormat = '%i %%';
             app.GAWopenthresholdinoflocalmaximumEditField.Tooltip = {'When to consider the glottis open when computing from GAW channel. Normally, this is 0. Value in percentage of local max.'};
             app.GAWopenthresholdinoflocalmaximumEditField.Layout.Row = 3;
             app.GAWopenthresholdinoflocalmaximumEditField.Layout.Column = 2;
@@ -1986,12 +1995,12 @@ classdef VocaliscopeCalculationSettings < matlab.apps.AppBase
             app.absoluitepeakprominenceEditField.Layout.Row = 6;
             app.absoluitepeakprominenceEditField.Layout.Column = 1;
 
-            % Create absoluitepeakprominenceEditFieldLabel
-            app.absoluitepeakprominenceEditFieldLabel = uilabel(app.GridLayout3);
-            app.absoluitepeakprominenceEditFieldLabel.HorizontalAlignment = 'right';
-            app.absoluitepeakprominenceEditFieldLabel.Layout.Row = 6;
-            app.absoluitepeakprominenceEditFieldLabel.Layout.Column = 2;
-            app.absoluitepeakprominenceEditFieldLabel.Text = 'absoluite peak prominence';
+            % Create absolutepeakprominenceLabel
+            app.absolutepeakprominenceLabel = uilabel(app.GridLayout3);
+            app.absolutepeakprominenceLabel.HorizontalAlignment = 'right';
+            app.absolutepeakprominenceLabel.Layout.Row = 6;
+            app.absolutepeakprominenceLabel.Layout.Column = 2;
+            app.absolutepeakprominenceLabel.Text = 'absolute peak prominence';
 
             % Create relativepeakprominenceinreferencetowindowmaximumEditFieldLabel
             app.relativepeakprominenceinreferencetowindowmaximumEditFieldLabel = uilabel(app.GridLayout3);
@@ -2007,6 +2016,14 @@ classdef VocaliscopeCalculationSettings < matlab.apps.AppBase
             app.relativepeakprominenceinreferencetowindowmaximumEditField.Enable = 'off';
             app.relativepeakprominenceinreferencetowindowmaximumEditField.Layout.Row = 6;
             app.relativepeakprominenceinreferencetowindowmaximumEditField.Layout.Column = 4;
+
+            % Create showRelativeGAWphaseBorders
+            app.showRelativeGAWphaseBorders = uicheckbox(app.GridLayout3);
+            app.showRelativeGAWphaseBorders.Tooltip = {'Normally, thresholds for the cycle phases in GAW are calculated via absolute thresholds relative to the cycle maximum. If the glottis is never fully closed, there will be no closed phase. Tick this if you want to use thresholds instead which are relative to the range of the cycle, not the cycle maximum.'};
+            app.showRelativeGAWphaseBorders.Text = 'show relative GAW quotient thresholds borders';
+            app.showRelativeGAWphaseBorders.WordWrap = 'on';
+            app.showRelativeGAWphaseBorders.Layout.Row = 2;
+            app.showRelativeGAWphaseBorders.Layout.Column = 3;
 
             % Create foTab
             app.foTab = uitab(app.TabGroup);

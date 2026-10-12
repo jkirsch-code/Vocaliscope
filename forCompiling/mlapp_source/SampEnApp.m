@@ -5,7 +5,7 @@ classdef SampEnApp < matlab.apps.AppBase
     properties (Access = public)
         UIFigure                        matlab.ui.Figure
         GridLayout                      matlab.ui.container.GridLayout
-        MinpeakvalueHilbertrelativetodatamximum90Slider  matlab.ui.control.Slider
+        MinpeakvalueHilbertrelativetodatamaximum90Slider  matlab.ui.control.Slider
         MinpeakvalueHilbertrelativetodatamximum90SliderLabel  matlab.ui.control.Label
         uselogarithmicyscaleCheckBox    matlab.ui.control.CheckBox
         AlsoexportcyclefrequencyCheckBox  matlab.ui.control.CheckBox
@@ -210,9 +210,9 @@ classdef SampEnApp < matlab.apps.AppBase
 
 
             distanceFromTheta=-abs(angle(AnalyticSignalLowpassed)-theta1);
-            [~,index]=findpeaks(distanceFromTheta,'MinPeakDistance',minDistance,'MinPeakProminence',app.MinpeakprominenceHilbertrelativetorangeofthetadistanceSlider.Value/100*range(distanceFromTheta),'MinPeakHeight',app.MinpeakvalueHilbertrelativetodatamximum90Slider.Value/100*range(distanceFromTheta)+min(distanceFromTheta));
+            [~,index]=findpeaks(distanceFromTheta,'MinPeakDistance',minDistance,'MinPeakProminence',app.MinpeakprominenceHilbertrelativetorangeofthetadistanceSlider.Value/100*range(distanceFromTheta),'MinPeakHeight',app.MinpeakvalueHilbertrelativetodatamaximum90Slider.Value/100*range(distanceFromTheta)+min(distanceFromTheta));
 
-            %[~,index]=findpeaks(distanceFromTheta,'MinPeakProminence',app.MinpeakprominenceHilbertrelativetorangeofthetadistanceSlider.Value/100*range(distanceFromTheta),'MinPeakHeight',app.MinpeakvalueHilbertrelativetodatamximum90Slider.Value/100*range(distanceFromTheta)+min(distanceFromTheta));
+            %[~,index]=findpeaks(distanceFromTheta,'MinPeakProminence',app.MinpeakprominenceHilbertrelativetorangeofthetadistanceSlider.Value/100*range(distanceFromTheta),'MinPeakHeight',app.MinpeakvalueHilbertrelativetodatamaximum90Slider.Value/100*range(distanceFromTheta)+min(distanceFromTheta));
 
             % while any(diff(index)<=0.9*floor(fs*1/maxfreq))
             %     index(find(diff(index)<=0.9*floor(fs*1/maxfreq))+1)=[];
@@ -232,12 +232,12 @@ classdef SampEnApp < matlab.apps.AppBase
                 excerpt = distanceFromTheta(excerptIdx);
 
                 [~, currlocs] = findpeaks(excerpt, ...
-                    'MinPeakHeight', app.MinpeakvalueHilbertrelativetodatamximum90Slider.Value / 100 * range(distanceFromTheta) + min(distanceFromTheta), ...
-                    'MinPeakProminence', app.MinpeakvalueHilbertrelativetodatamximum90Slider.Value / 100 * range(distanceFromTheta));
+                    'MinPeakHeight', app.MinpeakvalueHilbertrelativetodatamaximum90Slider.Value / 100 * range(distanceFromTheta) + min(distanceFromTheta), ...
+                    'MinPeakProminence', app.MinpeakvalueHilbertrelativetodatamaximum90Slider.Value / 100 * range(distanceFromTheta));
 
                 if numel(currlocs) < 2
                     [~, currlocs] = findpeaks(excerpt, ...
-                        'MinPeakHeight', app.MinpeakvalueHilbertrelativetodatamximum90Slider.Value / 100 * range(distanceFromTheta) + min(distanceFromTheta));
+                        'MinPeakHeight', app.MinpeakvalueHilbertrelativetodatamaximum90Slider.Value / 100 * range(distanceFromTheta) + min(distanceFromTheta));
                 end
 
                 if isempty(currlocs)
@@ -266,10 +266,10 @@ classdef SampEnApp < matlab.apps.AppBase
                 excerptIdx(excerptIdx<1 | excerptIdx>numel(distanceFromTheta))=[];
                 excerpt=distanceFromTheta(excerptIdx);
 
-                [~,currlocs]=findpeaks(excerpt,'MinPeakHeight',app.MinpeakvalueHilbertrelativetodatamximum90Slider.Value/100*range(distanceFromTheta)+min(distanceFromTheta),'MinPeakProminence',app.MinpeakvalueHilbertrelativetodatamximum90Slider.Value/100*range(distanceFromTheta));
+                [~,currlocs]=findpeaks(excerpt,'MinPeakHeight',app.MinpeakvalueHilbertrelativetodatamaximum90Slider.Value/100*range(distanceFromTheta)+min(distanceFromTheta),'MinPeakProminence',app.MinpeakvalueHilbertrelativetodatamaximum90Slider.Value/100*range(distanceFromTheta));
 
                 if numel(currlocs)<2
-                    [~,currlocs]=findpeaks(excerpt,'MinPeakHeight',app.MinpeakvalueHilbertrelativetodatamximum90Slider.Value/100*range(distanceFromTheta)+min(distanceFromTheta));
+                    [~,currlocs]=findpeaks(excerpt,'MinPeakHeight',app.MinpeakvalueHilbertrelativetodatamaximum90Slider.Value/100*range(distanceFromTheta)+min(distanceFromTheta));
                 end
                     
                 if numel(currlocs)<2
@@ -1041,8 +1041,8 @@ classdef SampEnApp < matlab.apps.AppBase
         end
 
         % Value changing function: 
-        % MinpeakvalueHilbertrelativetodatamximum90Slider
-        function MinpeakvalueHilbertrelativetodatamximum90SliderValueChanging(app, event)
+        % MinpeakvalueHilbertrelativetodatamaximum90Slider
+        function MinpeakvalueHilbertrelativetodatamaximum90SliderValueChanging(app, event)
             changingValue = event.Value;
             app.MinpeakvalueHilbertrelativetodatamximum90SliderLabel.Text=['Min peak value, relative to data mximum: ' num2str(changingValue) '%'];
         end
@@ -1251,14 +1251,14 @@ classdef SampEnApp < matlab.apps.AppBase
             app.MinpeakvalueHilbertrelativetodatamximum90SliderLabel.Layout.Column = [3 4];
             app.MinpeakvalueHilbertrelativetodatamximum90SliderLabel.Text = 'Min peak value, relative to data mximum: 90%';
 
-            % Create MinpeakvalueHilbertrelativetodatamximum90Slider
-            app.MinpeakvalueHilbertrelativetodatamximum90Slider = uislider(app.GridLayout);
-            app.MinpeakvalueHilbertrelativetodatamximum90Slider.Limits = [0 95];
-            app.MinpeakvalueHilbertrelativetodatamximum90Slider.ValueChangedFcn = createCallbackFcn(app, @generalCycleRefreshCallback, true);
-            app.MinpeakvalueHilbertrelativetodatamximum90Slider.ValueChangingFcn = createCallbackFcn(app, @MinpeakvalueHilbertrelativetodatamximum90SliderValueChanging, true);
-            app.MinpeakvalueHilbertrelativetodatamximum90Slider.Layout.Row = 10;
-            app.MinpeakvalueHilbertrelativetodatamximum90Slider.Layout.Column = [3 4];
-            app.MinpeakvalueHilbertrelativetodatamximum90Slider.Value = 90;
+            % Create MinpeakvalueHilbertrelativetodatamaximum90Slider
+            app.MinpeakvalueHilbertrelativetodatamaximum90Slider = uislider(app.GridLayout);
+            app.MinpeakvalueHilbertrelativetodatamaximum90Slider.Limits = [0 95];
+            app.MinpeakvalueHilbertrelativetodatamaximum90Slider.ValueChangedFcn = createCallbackFcn(app, @generalCycleRefreshCallback, true);
+            app.MinpeakvalueHilbertrelativetodatamaximum90Slider.ValueChangingFcn = createCallbackFcn(app, @MinpeakvalueHilbertrelativetodatamaximum90SliderValueChanging, true);
+            app.MinpeakvalueHilbertrelativetodatamaximum90Slider.Layout.Row = 10;
+            app.MinpeakvalueHilbertrelativetodatamaximum90Slider.Layout.Column = [3 4];
+            app.MinpeakvalueHilbertrelativetodatamaximum90Slider.Value = 90;
 
             % Show the figure after all components are created
             app.UIFigure.Visible = 'on';

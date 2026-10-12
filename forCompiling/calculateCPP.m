@@ -154,7 +154,7 @@ for fitTypeNr=1:numel(fitTypes)
         title(ax,sprintf('CPP with %s fit is %.2f, %.2f or %.2f dB',fitTypes{fitTypeNr},CPP));
         legend(ax,'Location','northeast');
 
-        ylabel(ax,'Cesptrum (dB)')
+        ylabel(ax,'Cepstrum (dB)')
         xlabel(ax,'Quefrency (s)')
     end
 
